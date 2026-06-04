@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema de Citas Médicas</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body { margin: 0; font-family: Arial, sans-serif; background: #f4f8fb; color: #1f2937; }
+        nav { background: #0f172a; color: white; padding: 15px 40px; display: flex; gap: 15px; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+        nav input { padding: 10px; border-radius: 8px; border: none; width: 260px; }
+        header { background: linear-gradient(135deg, #0ea5e9, #2563eb); color: white; padding: 60px 20px; text-align: center; }
+        .container { max-width: 1150px; margin: 35px auto; padding: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+        .card, .section { background: white; padding: 25px; border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,.08); }
+        .doctor-img { width: 100%; height: 160px; object-fit: cover; border-radius: 12px; margin-bottom: 12px; background: #e5e7eb; }
+        h2 { color: #2563eb; }
+        label { display: block; margin-top: 12px; font-weight: bold; }
+        input, select { width: 100%; padding: 10px; margin-top: 6px; border: 1px solid #cbd5e1; border-radius: 8px; }
+        button, .btn { margin-top: 15px; padding: 12px 18px; border: none; border-radius: 8px; background: #2563eb; color: white; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
+        .btn-dark { background: #0f172a; }
+        .result { margin-top: 20px; background: #f8fafc; padding: 15px; border-radius: 10px; white-space: pre-wrap; overflow-x: auto; }
+        .error { color: #dc2626; font-weight: bold; }
+        .kpi-card { text-align: center; }
+        .kpi-card h2 { font-size: 42px; margin: 0; }
+        canvas { margin-top: 20px; max-height: 420px; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th { background: #2563eb; color: white; padding: 12px; text-align: left; }
+        td { padding: 10px; border-bottom: 1px solid #e5e7eb; }
+        tr:hover { background: #f8fafc; }
+
+        footer { text-align: center; padding: 25px; color: #64748b; }
+    </style>
+</head>
+
+<body onload="iniciarPagina();">
+
+<nav>
+    <strong>Citas Médicas</strong>
+
+    <input type="text" id="buscador" placeholder="Buscar paciente por nombre..." onkeyup="buscarPaciente()">
+
+    <input type="text" id="buscadorDoctor" placeholder="Buscar doctor por especialidad..." onkeyup="buscarDoctor()">
+</nav>
+
+<header>
+    <h1>Sistema de Gestión de Citas Médicas</h1>
+    <p>FastAPI + SQLite + Dataset Kaggle + Formularios HTML + Multimedia + Dashboard</p>
+    <a class="btn btn-dark" href="/docs">Ver API Swagger</a>
+</header>
+
+<main class="container">
+
+    <section class="grid">
+        <div class="card">
+            <h2>Pacientes</h2>
+            <p>Registro y consulta de pacientes.</p>
+        </div>
+
+        <div class="card">
+            <h2>Doctores</h2>
+            <p>Gestión de doctores con imagen, especialidad y consultorio.</p>
+        </div>
+
+        <div class="card">
+            <h2>Citas</h2>
+            <p>Asignación de citas entre pacientes y doctores.</p>
+        </div>
+    </section>
+
+    <br>
+
+    <section class="section">
+        <h2>Registrar Paciente</h2>
+
+        <form onsubmit="crearPaciente(event)">
+            <label>Nombre</label>
+            <input id="nombre" required minlength="4" placeholder="Ej: Juan Pérez">
+
+            <label>Documento</label>
+            <input id="documento" required minlength="5" placeholder="Ej: 1002456789">
+
+            <label>Teléfono</label>
+            <input id="telefono" required minlength="7" placeholder="Ej: 3004567890">
+
+            <button type="submit">Guardar paciente</button>
+        </form>
+
+        <div id="resultadoPaciente" class="result"></div>
+    </section>
+
+    <br>
+
+    <section class="section">
+        <h2>Registrar Doctor con Imagen</h2>
+
+        <form onsubmit="crearDoctor(event)">
+            <label>Nombre del doctor</label>
+            <input id="doctorNombre" required minlength="4" placeholder="Ej: Dra. Laura Gómez">
+
+            <label>Especialidad</label>
+            <select id="doctorEspecialidad" required>
+                <option value="">Seleccione una especialidad</option>
+                <option value="Medicina General">Medicina General</option>
+                <option value="Odontologia">Odontología</option>
+                <option value="Pediatria">Pediatría</option>
+                <option value="Medicina Interna">Medicina Interna</option>
+                <option value="Dermatologia">Dermatología</option>
+            </select>
+
+            <label>Consultorio</label>
+            <input id="doctorConsultorio" required minlength="1" maxlength="20" placeholder="Ej: 205">
+
+            <label>URL de imagen</label>
+            <input id="doctorImagen" required type="url" placeholder="https://placehold.co/300x200?text=Doctor">
+
+            <button type="submit">Guardar doctor</button>
+        </form>
+
+        <div id="resultadoDoctor" class="result"></div>
+    </section>
+
+    <br>
+
+    <section class="section">
+        <h2>Registrar Cita Médica</h2>
+
+        <form onsubmit="crearCita(event)">
+            <label>Paciente</label>
+            <select id="citaPaciente" required>
+                <option value="">Seleccione un paciente</option>
+            </select>
+
+            <label>Doctor</label>
+            <select id="citaDoctor" required>
+                <option value="">Seleccione un doctor</option>
+            </select>
+
+            <label>Tipo de consulta</label>
+            <select id="citaTipo" required>
+                <option value="GENERAL">General</option>
+                <option value="ODONTOLOGIA">Odontología</option>
+                <option value="PEDIATRIA">Pediatría</option>
+                <option value="MEDICINA_INTERNA">Medicina interna</option>
+                <option value="DERMATOLOGIA">Dermatología</option>
+            </select>
+
+            <label>Fecha</label>
+            <input id="citaFecha" type="date" required>
+
+            <label>Hora</label>
+            <input id="citaHora" type="time" required>
+
+            <button type="submit">Guardar cita</button>
+        </form>
+
+        <div id="resultadoCita" class="result"></div>
+    </section>
+
+    <br>
+
+    <section class="section">
+        <h2>Citas Registradas</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Paciente</th>
+                    <th>Doctor</th>
+                    <th>Tipo</th>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody id="tbodyCitas"></tbody>
+        </table>
+    </section>
+
+    <br>
+
+    <section class="section">
+        <h2>Doctores registrados</h2>
+        <div id="listaDoctores" class="grid"></div>
+    </section>
+
+    <br>
+
+    <section class="section">
+        <h2>Dashboard de Hallazgos</h2>
+
+        <div class="grid">
+            <div class="card kpi-card">
+                <h2 id="kpiPacientes">0</h2>
+                <p>Total pacientes</p>
+            </div>
+
+            <div class="card kpi-card">
+                <h2 id="kpiDoctores">0</h2>
+                <p>Total doctores</p>
+            </div>
+
+            <div class="card kpi-card">
+                <h2 id="kpiCitas">0</h2>
+                <p>Total citas</p>
+            </div>
+        </div>
+
+        <div id="resumen" class="result"></div>
+
+        <h3>Especialidades más solicitadas</h3>
+        <canvas id="graficaEspecialidades"></canvas>
+
+        <h3>Doctores con más citas</h3>
+        <canvas id="graficaDoctores"></canvas>
+
+        <h3>Pacientes frecuentes</h3>
+        <canvas id="graficaPacientes"></canvas>
+
+        <h3>Tipos de consulta</h3>
+        <canvas id="graficaTiposConsulta"></canvas>
+    </section>
+
+    <br>
+
+    <section class="section">
+        <h2>Resultados de búsqueda</h2>
+        <h3>Pacientes</h3>
+        <div id="resultadosBusqueda" class="result"></div>
+
+        <h3>Doctores</h3>
+        <div id="resultadosBusquedaDoctor" class="result"></div>
+    </section>
+
+</main>
+
+<footer>
+    Proyecto académico - Sistema de Citas Médicas
+</footer>
+
+<script>
+    let graficaEspecialidades = null;
+    let graficaDoctores = null;
+    let graficaPacientes = null;
+    let graficaTiposConsulta = null;
+
+    async function iniciarPagina() {
+        await cargarPacientesSelect();
+        await cargarDoctoresSelect();
+        await cargarDoctores();
+        await cargarCitas();
+        await cargarResumen();
+        await cargarEspecialidades();
+        await cargarDoctoresTop();
+        await cargarPacientesFrecuentes();
+        await cargarTiposConsulta();
+
+        const fechaInput = document.getElementById("citaFecha");
+        fechaInput.min = new Date().toISOString().split("T")[0];
+    }
+
+    async function crearPaciente(event) {
+        event.preventDefault();
+
+        const paciente = {
+            nombre: document.getElementById("nombre").value,
+            documento: document.getElementById("documento").value,
+            telefono: document.getElementById("telefono").value,
+            estado: "ACTIVO"
+        };
+
+        const response = await fetch("/pacientes", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(paciente)
+        });
+
+        const data = await response.json();
+        document.getElementById("resultadoPaciente").innerText = JSON.stringify(data, null, 2);
+
+        event.target.reset();
+        await cargarPacientesSelect();
+        await cargarResumen();
+    }
+
+    async function crearDoctor(event) {
+        event.preventDefault();
+
+        const doctor = {
+            nombre: document.getElementById("doctorNombre").value,
+            especialidad: document.getElementById("doctorEspecialidad").value,
+            consultorio: document.getElementById("doctorConsultorio").value,
+            imagen_url: document.getElementById("doctorImagen").value,
+            estado: "ACTIVO"
+        };
+
+        const response = await fetch("/doctores", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(doctor)
+        });
+
+        const data = await response.json();
+        document.getElementById("resultadoDoctor").innerText = JSON.stringify(data, null, 2);
+
+        event.target.reset();
+        await cargarDoctores();
+        await cargarDoctoresSelect();
+        await cargarResumen();
+    }
+
+    async function crearCita(event) {
+        event.preventDefault();
+
+        const pacienteId = document.getElementById("citaPaciente").value;
+        const doctorId = document.getElementById("citaDoctor").value;
+        const tipo = document.getElementById("citaTipo").value;
+        const fecha = document.getElementById("citaFecha").value;
+        const hora = document.getElementById("citaHora").value;
+
+        if (!pacienteId || !doctorId || !fecha || !hora) {
+            document.getElementById("resultadoCita").innerHTML =
+                "<span class='error'>Debe seleccionar paciente, doctor, fecha y hora.</span>";
+            return;
+        }
+
+        const hoy = new Date().toISOString().split("T")[0];
+
+        if (fecha < hoy) {
+            document.getElementById("resultadoCita").innerHTML =
+                "<span class='error'>No se puede registrar una cita en una fecha pasada.</span>";
+            return;
+        }
+
+        const cita = {
+            paciente_id: Number(pacienteId),
+            doctor_id: Number(doctorId),
+            tipo_consulta: tipo,
+            fecha: fecha,
+            hora: hora,
+            estado: "ACTIVO"
+        };
+
+        const response = await fetch("/citas", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(cita)
+        });
+
+        const data = await response.json();
+        document.getElementById("resultadoCita").innerText = JSON.stringify(data, null, 2);
+
+        event.target.reset();
+        await cargarCitas();
+        await cargarResumen();
+        await cargarEspecialidades();
+        await cargarDoctoresTop();
+        await cargarPacientesFrecuentes();
+        await cargarTiposConsulta();
+    }
+
+    async function buscarPaciente() {
+        const nombre = document.getElementById("buscador").value;
+
+        if (nombre.length < 3) {
+            document.getElementById("resultadosBusqueda").innerText = "";
+            return;
+        }
+
+        const response = await fetch(`/pacientes/buscar/?nombre=${encodeURIComponent(nombre)}`);
+        const data = await response.json();
+
+        document.getElementById("resultadosBusqueda").innerText = JSON.stringify(data, null, 2);
+    }
+
+    async function buscarDoctor() {
+        const especialidad = document.getElementById("buscadorDoctor").value;
+
+        if (especialidad.length < 3) {
+            document.getElementById("resultadosBusquedaDoctor").innerText = "";
+            return;
+        }
+
+        const response = await fetch(`/doctores/buscar/?especialidad=${encodeURIComponent(especialidad)}`);
+        const data = await response.json();
+
+        document.getElementById("resultadosBusquedaDoctor").innerText = JSON.stringify(data, null, 2);
+    }
+
+    async function cargarPacientesSelect() {
+        const response = await fetch("/pacientes");
+        const pacientes = await response.json();
+
+        const select = document.getElementById("citaPaciente");
+        select.innerHTML = '<option value="">Seleccione un paciente</option>';
+
+        pacientes.forEach(paciente => {
+            select.innerHTML += `<option value="${paciente.id}">${paciente.nombre} - Doc: ${paciente.documento}</option>`;
+        });
+    }
+
+    async function cargarDoctoresSelect() {
+        const response = await fetch("/doctores");
+        const doctores = await response.json();
+
+        const select = document.getElementById("citaDoctor");
+        select.innerHTML = '<option value="">Seleccione un doctor</option>';
+
+        doctores.forEach(doctor => {
+            select.innerHTML += `<option value="${doctor.id}">${doctor.nombre} - ${doctor.especialidad}</option>`;
+        });
+    }
+
+    async function cargarDoctores() {
+        const response = await fetch("/doctores");
+        const doctores = await response.json();
+
+        const contenedor = document.getElementById("listaDoctores");
+        contenedor.innerHTML = "";
+
+        doctores.forEach(doctor => {
+            const card = document.createElement("div");
+            card.className = "card";
+
+            card.innerHTML = `
+                <img class="doctor-img" src="${doctor.imagen_url}" alt="${doctor.nombre}">
+                <h2>${doctor.nombre}</h2>
+                <p><strong>Especialidad:</strong> ${doctor.especialidad}</p>
+                <p><strong>Consultorio:</strong> ${doctor.consultorio}</p>
+                <p><strong>Estado:</strong> ${doctor.estado}</p>
+            `;
+
+            contenedor.appendChild(card);
+        });
+    }
+
+    async function cargarCitas() {
+        const response = await fetch("/citas");
+        const citas = await response.json();
+
+        const pacientesResponse = await fetch("/pacientes");
+        const pacientes = await pacientesResponse.json();
+
+        const doctoresResponse = await fetch("/doctores");
+        const doctores = await doctoresResponse.json();
+
+        const tbody = document.getElementById("tbodyCitas");
+        tbody.innerHTML = "";
+
+        citas.forEach(cita => {
+            const paciente = pacientes.find(p => p.id === cita.paciente_id);
+            const doctor = doctores.find(d => d.id === cita.doctor_id);
+
+            tbody.innerHTML += `
+                <tr>
+                    <td>${cita.id}</td>
+                    <td>${paciente ? paciente.nombre : cita.paciente_id}</td>
+                    <td>${doctor ? doctor.nombre : cita.doctor_id}</td>
+                    <td>${cita.tipo_consulta}</td>
+                    <td>${cita.fecha}</td>
+                    <td>${cita.hora}</td>
+                    <td>${cita.estado}</td>
+                </tr>
+            `;
+        });
+    }
+
+    async function cargarResumen() {
+        const response = await fetch("/hallazgos/resumen");
+        const data = await response.json();
+
+        document.getElementById("kpiPacientes").innerText = data.total_pacientes;
+        document.getElementById("kpiDoctores").innerText = data.total_doctores;
+        document.getElementById("kpiCitas").innerText = data.total_citas;
+
+        document.getElementById("resumen").innerText = JSON.stringify(data, null, 2);
+    }
+
+    async function cargarEspecialidades() {
+        const response = await fetch("/hallazgos/especialidades");
+        const data = await response.json();
+
+        const labels = data.map(item => item.especialidad);
+        const values = data.map(item => item.cantidad_citas);
+
+        if (graficaEspecialidades) graficaEspecialidades.destroy();
+
+        graficaEspecialidades = new Chart(document.getElementById("graficaEspecialidades"), {
+            type: "bar",
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: "Cantidad de citas por especialidad",
+                    data: values
+                }]
+            }
+        });
+    }
+
+    async function cargarDoctoresTop() {
+        const response = await fetch("/hallazgos/doctores-top");
+        const data = await response.json();
+
+        const top = data.slice(0, 5);
+        const labels = top.map(item => item.doctor);
+        const values = top.map(item => item.cantidad_citas);
+
+        if (graficaDoctores) graficaDoctores.destroy();
+
+        graficaDoctores = new Chart(document.getElementById("graficaDoctores"), {
+            type: "bar",
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: "Citas por doctor",
+                    data: values
+                }]
+            }
+        });
+    }
+
+    async function cargarPacientesFrecuentes() {
+        const response = await fetch("/hallazgos/pacientes-frecuentes");
+        const data = await response.json();
+
+        const top = data.slice(0, 5);
+        const labels = top.map(item => item.paciente);
+        const values = top.map(item => item.cantidad_citas);
+
+        if (graficaPacientes) graficaPacientes.destroy();
+
+        graficaPacientes = new Chart(document.getElementById("graficaPacientes"), {
+            type: "bar",
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: "Citas por paciente",
+                    data: values
+                }]
+            }
+        });
+    }
+
+    async function cargarTiposConsulta() {
+        const response = await fetch("/hallazgos/tipos-consulta");
+        const data = await response.json();
+
+        const labels = data.map(item => item.tipo_consulta);
+        const values = data.map(item => item.cantidad_citas);
+
+        if (graficaTiposConsulta) graficaTiposConsulta.destroy();
+
+        graficaTiposConsulta = new Chart(document.getElementById("graficaTiposConsulta"), {
+            type: "pie",
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: "Tipos de consulta",
+                    data: values
+                }]
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

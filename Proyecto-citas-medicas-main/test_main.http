@@ -1,0 +1,60 @@
+GET http://127.0.0.1:8000/
+Accept: application/json
+
+###
+
+POST http://127.0.0.1:8000/pacientes
+Content-Type: application/json
+
+{
+  "nombre": "Juan Perez",
+  "documento": "12345678",
+  "telefono": "3001234567",
+ "estado": "ACTIVO"
+}
+
+###
+
+POST http://127.0.0.1:8000/doctores
+Content-Type: application/json
+
+{
+  "nombre": "Laura Diaz",
+  "especialidad": "Odontologia",
+  "consultorio": "101",
+  "estado": "ACTIVO"
+}
+
+###
+
+POST http://127.0.0.1:8000/citas
+Content-Type: application/json
+
+{
+  "paciente_id": 1,
+  "doctor_id": 1,
+  "tipo_consulta": "ODONTOLOGIA",
+  "fecha": "2026-04-25",
+  "hora": "10:00",
+  "estado": "ACTIVO"
+}
+
+###
+
+GET http://127.0.0.1:8000/pacientes/buscar/?nombre=Juan
+Accept: application/json
+
+###
+
+GET http://127.0.0.1:8000/doctores/filtrar/?estado=ACTIVO&consultorio=101
+Accept: application/json
+
+###
+
+GET http://127.0.0.1:8000/citas/filtrar/?fecha=2026-04-25&doctor_id=1&estado=ACTIVO
+Accept: application/json
+
+###
+
+DELETE http://127.0.0.1:8000/citas/1
+Accept: application/json
