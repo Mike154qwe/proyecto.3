@@ -9,6 +9,9 @@ load_dotenv()
 
 database_url = os.getenv("DATABASE_URL", "sqlite:///./citas_criterios.sqlite3")
 
+if database_url.startswith("postgresql://"):
+    database_url = database_url.replace("postgresql://", "postgresql+psycopg://", 1)
+
 connect_args = {"check_same_thread": False} if database_url.startswith("sqlite") else {}
 engine = create_engine(database_url, echo=False, connect_args=connect_args)
 
