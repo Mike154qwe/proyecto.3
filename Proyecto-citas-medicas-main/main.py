@@ -1,3 +1,9 @@
+import os
+import shutil
+
+from fastapi import UploadFile, File
+from fastapi.staticfiles import StaticFiles
+
 from fastapi import FastAPI, HTTPException, Request, Query
 from starlette.responses import JSONResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -23,6 +29,14 @@ app = FastAPI(
     version="2.0.0",
     lifespan=create_all_tables
 )
+os.makedirs("static/uploads", exist_ok=True)
+
+app.mount(
+    "/static",
+    StaticFiles(directory="static"),
+    name="static"
+)
+
 
 templates = Jinja2Templates(directory="templates")
 
@@ -304,3 +318,30 @@ async def hallazgos_tipos_consulta(session: SessionDep):
         {"tipo_consulta": tipo, "cantidad_citas": cantidad}
         for tipo, cantidad in conteo.items()
     ]
+
+
+    @app.post("/upload-imagen")
+async def upload_imagen(file: UploadFile = File(...)):
+
+    allowed_types = [
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+    ]
+
+    if file.content_type not in allowed_types:
+        raise HTTPException(
+            status_code=400,
+            detail="Solo se permiten imagenes JPG, PNG o WEBP"
+        )
+
+    filename = file.filename.replace(" ", "_")
+
+    file_path = f"static/uploads/{filename}"
+
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    return {
+        "imagen_url": f"/static/uploads/{filename}"
+    }
