@@ -512,7 +512,7 @@
 
                 <div>
                     <label>URL de imagen</label>
-                    <input id="doctorImagen" required type="url" placeholder="https://placehold.co/300x200?text=Doctor">
+                  <input id="doctorImagenArchivo" required type="file" accept="image/png,image/jpeg,image/webp">
                 </div>
             </div>
 
@@ -764,11 +764,28 @@ async function guardarDoctor(event) {
 
     const id = document.getElementById("doctorId").value;
 
+    const archivo = document.getElementById("doctorImagenArchivo").files[0];
+
+const formData = new FormData();
+formData.append("file", archivo);
+
+const uploadResponse = await fetch("/upload-imagen", {
+    method: "POST",
+    body: formData
+});
+
+const uploadData = await uploadResponse.json();
+
+if (!uploadResponse.ok) {
+    mostrarResultado("resultadoDoctor", uploadData);
+    return;
+}
+
     const doctor = {
         nombre: document.getElementById("doctorNombre").value,
         especialidad: document.getElementById("doctorEspecialidad").value,
         consultorio: document.getElementById("doctorConsultorio").value,
-        imagen_url: document.getElementById("doctorImagen").value,
+        imagen_url: uploadData.imagen_url,
         estado: "ACTIVO"
     };
 

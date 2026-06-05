@@ -358,3 +358,21 @@ async def upload_imagen(file: UploadFile = File(...)):
     return {
         "imagen_url": f"/static/uploads/{filename}"
     }
+
+    @app.post("/upload-imagen")
+async def upload_imagen(file: UploadFile = File(...)):
+    allowed_types = ["image/jpeg", "image/png", "image/webp"]
+
+    if file.content_type not in allowed_types:
+        raise HTTPException(
+            status_code=400,
+            detail="Solo se permiten imagenes JPG, PNG o WEBP"
+        )
+
+    filename = file.filename.replace(" ", "_")
+    file_path = f"static/uploads/{filename}"
+
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    return {"imagen_url": f"/static/uploads/{filename}"}
