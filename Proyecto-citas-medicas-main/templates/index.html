@@ -7,52 +7,349 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: "Segoe UI", Arial, sans-serif; background: #eef5fb; color: #1f2937; }
-        nav { position: sticky; top: 0; z-index: 10; background: #0f172a; color: white; padding: 16px 40px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
-        nav strong { font-size: 20px; }
-        .nav-search { display: flex; gap: 12px; flex-wrap: wrap; }
-        .nav-search input { width: 260px; padding: 11px 14px; border-radius: 10px; border: none; outline: none; }
-        header { background: linear-gradient(135deg, #0284c7, #2563eb, #1e40af); color: white; padding: 70px 20px; text-align: center; }
-        header h1 { font-size: 44px; margin-bottom: 14px; }
-        header p { font-size: 18px; max-width: 850px; margin: auto; }
-        .container { max-width: 1250px; margin: 35px auto; padding: 0 20px; }
-        .section { background: white; padding: 28px; border-radius: 20px; box-shadow: 0 10px 28px rgba(15,23,42,.08); margin-bottom: 28px; }
-        .section-title { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 20px; border-bottom: 1px solid #e5e7eb; padding-bottom: 15px; }
-        h2 { color: #1d4ed8; font-size: 24px; }
-        h3 { color: #0f172a; margin: 25px 0 12px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
-        .card { background: #fff; border: 1px solid #e5e7eb; padding: 22px; border-radius: 18px; box-shadow: 0 8px 20px rgba(15,23,42,.06); }
-        .feature-card { border-left: 5px solid #2563eb; }
-        .kpi-card { text-align: center; background: linear-gradient(180deg, #fff, #f8fafc); }
-        .kpi-card h2 { font-size: 42px; margin-bottom: 6px; }
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; }
-        label { font-weight: 700; display: block; margin-bottom: 7px; color: #334155; }
-        input, select { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 10px; outline: none; font-size: 15px; }
-        input:focus, select:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
-        button, .btn { padding: 10px 14px; border: none; border-radius: 10px; background: #2563eb; color: white; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 10px; }
-        button:hover, .btn:hover { background: #1d4ed8; }
-        .btn-dark { background: #0f172a; margin-top: 24px; }
-        .btn-danger { background: #dc2626; }
-        .btn-danger:hover { background: #b91c1c; }
-        .btn-warning { background: #f59e0b; }
-        .btn-warning:hover { background: #d97706; }
-        .result { margin-top: 18px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px; border-radius: 12px; white-space: pre-wrap; overflow-x: auto; font-size: 14px; }
-        .error { color: #dc2626; font-weight: bold; }
-        .success { color: #16a34a; font-weight: bold; }
-        .doctor-img { width: 100%; height: 170px; object-fit: cover; border-radius: 14px; background: #e5e7eb; margin-bottom: 14px; }
-        .table-wrap { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; min-width: 900px; }
-        th { background: #2563eb; color: white; padding: 13px; text-align: left; font-size: 14px; }
-        td { padding: 12px; border-bottom: 1px solid #e5e7eb; font-size: 14px; }
-        tr:hover { background: #f8fafc; }
-        .badge { padding: 5px 10px; border-radius: 999px; font-size: 12px; font-weight: bold; background: #dcfce7; color: #166534; }
-        .badge-inactivo { background: #fee2e2; color: #991b1b; }
-        .actions { display: flex; gap: 8px; flex-wrap: wrap; }
-        .chart-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 24px; }
-        .chart-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 18px; padding: 20px; }
-        canvas { margin-top: 10px; max-height: 360px; }
-        footer { text-align: center; color: #64748b; padding: 30px; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #eef5fb;
+            color: #1f2937;
+        }
+
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: #0f172a;
+            color: white;
+            padding: 16px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 18px rgba(15, 23, 42, .25);
+        }
+
+        nav strong {
+            font-size: 20px;
+        }
+
+        .nav-search {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .nav-search input {
+            width: 260px;
+            padding: 11px 14px;
+            border-radius: 10px;
+            border: none;
+            outline: none;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0284c7, #2563eb, #1e40af);
+            color: white;
+            padding: 70px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 44px;
+            margin-bottom: 14px;
+        }
+
+        header p {
+            font-size: 18px;
+            max-width: 850px;
+            margin: auto;
+        }
+
+        .container {
+            max-width: 1250px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        .section {
+            background: white;
+            padding: 28px;
+            border-radius: 22px;
+            box-shadow: 0 10px 28px rgba(15, 23, 42, .08);
+            margin-bottom: 28px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 15px;
+        }
+
+        h2 {
+            color: #1d4ed8;
+            font-size: 24px;
+        }
+
+        h3 {
+            color: #0f172a;
+            margin: 25px 0 12px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            padding: 22px;
+            border-radius: 18px;
+            box-shadow: 0 8px 20px rgba(15, 23, 42, .06);
+        }
+
+        .feature-card {
+            border-left: 5px solid #2563eb;
+        }
+
+        .kpi-card {
+            text-align: center;
+            background: linear-gradient(180deg, #fff, #f8fafc);
+        }
+
+        .kpi-card h2 {
+            font-size: 42px;
+            margin-bottom: 6px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 16px;
+        }
+
+        label {
+            font-weight: 700;
+            display: block;
+            margin-bottom: 7px;
+            color: #334155;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            outline: none;
+            font-size: 15px;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, .12);
+        }
+
+        button,
+        .btn {
+            padding: 10px 14px;
+            border: none;
+            border-radius: 10px;
+            background: #2563eb;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+            transition: .2s;
+        }
+
+        button:hover,
+        .btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        .btn-dark {
+            background: #0f172a;
+            margin-top: 24px;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+
+        .btn-warning {
+            background: #f59e0b;
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+        }
+
+        .result {
+            margin-top: 18px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 14px;
+            border-radius: 12px;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            font-size: 14px;
+        }
+
+        .error {
+            color: #dc2626;
+            font-weight: bold;
+        }
+
+        .success {
+            color: #16a34a;
+            font-weight: bold;
+        }
+
+        .badge {
+            padding: 5px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: bold;
+            background: #dcfce7;
+            color: #166534;
+            display: inline-block;
+        }
+
+        .badge-inactivo {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+        }
+
+        .cards-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 18px;
+            margin-top: 18px;
+        }
+
+        .record-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            padding: 18px;
+            transition: .2s;
+        }
+
+        .record-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 18px rgba(15, 23, 42, .08);
+        }
+
+        .record-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .record-header h3 {
+            margin: 0;
+            color: #1d4ed8;
+        }
+
+        .record-meta {
+            display: grid;
+            gap: 7px;
+            font-size: 14px;
+        }
+
+        .record-meta span {
+            color: #475569;
+        }
+
+        .doctor-img {
+            width: 100%;
+            height: 170px;
+            object-fit: cover;
+            border-radius: 14px;
+            background: #e5e7eb;
+            margin-bottom: 14px;
+        }
+
+        .filters {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .filters input {
+            max-width: 320px;
+        }
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+            gap: 24px;
+        }
+
+        .chart-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            padding: 20px;
+        }
+
+        canvas {
+            margin-top: 10px;
+            max-height: 360px;
+        }
+
+        footer {
+            text-align: center;
+            color: #64748b;
+            padding: 30px;
+        }
+
+        @media (max-width: 650px) {
+            header h1 {
+                font-size: 32px;
+            }
+
+            nav {
+                padding: 14px 20px;
+            }
+
+            .nav-search input {
+                width: 100%;
+            }
+
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 
@@ -60,6 +357,7 @@
 
 <nav>
     <strong>Citas Médicas</strong>
+
     <div class="nav-search">
         <input type="text" id="buscador" placeholder="Buscar paciente..." onkeyup="buscarPaciente()">
         <input type="text" id="buscadorDoctor" placeholder="Buscar especialidad..." onkeyup="buscarDoctor()">
@@ -68,200 +366,238 @@
 
 <header>
     <h1>Sistema de Gestión de Citas Médicas</h1>
-    <p>CRUD completo para pacientes, doctores y citas médicas con dashboard, dataset, multimedia y reglas de negocio.</p>
+    <p>
+        CRUD completo para pacientes, doctores y citas médicas con dashboard,
+        dataset histórico, multimedia, búsquedas y reglas de negocio.
+    </p>
     <a class="btn btn-dark" href="/docs">Ver documentación Swagger</a>
 </header>
 
 <main class="container">
 
-<section class="grid">
-    <div class="card feature-card"><h2>Pacientes</h2><p>Crear, consultar, editar e inactivar pacientes.</p></div>
-    <div class="card feature-card"><h2>Doctores</h2><p>CRUD con imagen, especialidad y consultorio.</p></div>
-    <div class="card feature-card"><h2>Citas</h2><p>Agendar, consultar, reprogramar y cancelar citas.</p></div>
-</section>
+    <section class="grid">
+        <div class="card feature-card">
+            <h2>Pacientes</h2>
+            <p>Crear, consultar, editar e inactivar pacientes.</p>
+        </div>
 
-<section class="section">
-    <div class="section-title"><h2>Dashboard General</h2></div>
+        <div class="card feature-card">
+            <h2>Doctores</h2>
+            <p>CRUD con imagen, especialidad y consultorio.</p>
+        </div>
 
-    <div class="grid">
-        <div class="card kpi-card"><h2 id="kpiPacientes">0</h2><p>Total pacientes</p></div>
-        <div class="card kpi-card"><h2 id="kpiDoctores">0</h2><p>Total doctores</p></div>
-        <div class="card kpi-card"><h2 id="kpiCitas">0</h2><p>Total citas</p></div>
-    </div>
+        <div class="card feature-card">
+            <h2>Citas</h2>
+            <p>Agendar, consultar, reprogramar y cancelar citas.</p>
+        </div>
+    </section>
 
-    <div id="resumen" class="result"></div>
+    <section class="section">
+        <div class="section-title">
+            <h2>Dashboard General</h2>
+        </div>
 
-    <div class="chart-grid">
-        <div class="chart-card"><h3>Especialidades más solicitadas</h3><canvas id="graficaEspecialidades"></canvas></div>
-        <div class="chart-card"><h3>Doctores con más citas</h3><canvas id="graficaDoctores"></canvas></div>
-        <div class="chart-card"><h3>Pacientes frecuentes</h3><canvas id="graficaPacientes"></canvas></div>
-        <div class="chart-card"><h3>Tipos de consulta</h3><canvas id="graficaTiposConsulta"></canvas></div>
-    </div>
-</section>
-
-<section class="section">
-    <div class="section-title"><h2>Formulario Paciente</h2></div>
-
-    <form onsubmit="guardarPaciente(event)">
-        <input type="hidden" id="pacienteId">
-
-        <div class="form-grid">
-            <div>
-                <label>Nombre</label>
-                <input id="nombre" required minlength="4" placeholder="Ej: Juan Pérez">
+        <div class="grid">
+            <div class="card kpi-card">
+                <h2 id="kpiPacientes">0</h2>
+                <p>Total pacientes</p>
             </div>
-            <div>
-                <label>Documento</label>
-                <input id="documento" required minlength="5" placeholder="Ej: 1002456789">
+
+            <div class="card kpi-card">
+                <h2 id="kpiDoctores">0</h2>
+                <p>Total doctores</p>
             </div>
-            <div>
-                <label>Teléfono</label>
-                <input id="telefono" required minlength="7" placeholder="Ej: 3004567890">
+
+            <div class="card kpi-card">
+                <h2 id="kpiCitas">0</h2>
+                <p>Total citas</p>
             </div>
         </div>
 
-        <button type="submit" id="btnPaciente">Guardar paciente</button>
-        <button type="button" class="btn-warning" onclick="limpiarPaciente()">Cancelar edición</button>
-    </form>
+        <div id="resumen" class="result"></div>
 
-    <div id="resultadoPaciente" class="result"></div>
-
-    <h3>Pacientes registrados</h3>
-    <div class="table-wrap">
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th><th>Nombre</th><th>Documento</th><th>Teléfono</th><th>Estado</th><th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody id="tbodyPacientes"></tbody>
-        </table>
-    </div>
-</section>
-
-<section class="section">
-    <div class="section-title"><h2>Formulario Doctor</h2></div>
-
-    <form onsubmit="guardarDoctor(event)">
-        <input type="hidden" id="doctorId">
-
-        <div class="form-grid">
-            <div>
-                <label>Nombre del doctor</label>
-                <input id="doctorNombre" required minlength="4" placeholder="Ej: Dra. Laura Gómez">
+        <div class="chart-grid">
+            <div class="chart-card">
+                <h3>Especialidades más solicitadas</h3>
+                <canvas id="graficaEspecialidades"></canvas>
             </div>
-            <div>
-                <label>Especialidad</label>
-                <select id="doctorEspecialidad" required>
-                    <option value="">Seleccione una especialidad</option>
-                    <option value="Medicina General">Medicina General</option>
-                    <option value="Odontologia">Odontología</option>
-                    <option value="Pediatria">Pediatría</option>
-                    <option value="Medicina Interna">Medicina Interna</option>
-                    <option value="Dermatologia">Dermatología</option>
-                </select>
-            </div>
-            <div>
-                <label>Consultorio</label>
-                <input id="doctorConsultorio" required minlength="1" maxlength="20" placeholder="Ej: 205">
-            </div>
-            <div>
-                <label>Fotografía del doctor</label>
 
-<input
-    id="doctorImagenArchivo"
-    required
-    type="file"
-    accept="image/png,image/jpeg,image/webp"
->
+            <div class="chart-card">
+                <h3>Doctores con más citas</h3>
+                <canvas id="graficaDoctores"></canvas>
+            </div>
+
+            <div class="chart-card">
+                <h3>Pacientes frecuentes</h3>
+                <canvas id="graficaPacientes"></canvas>
+            </div>
+
+            <div class="chart-card">
+                <h3>Tipos de consulta</h3>
+                <canvas id="graficaTiposConsulta"></canvas>
             </div>
         </div>
+    </section>
 
-        <button type="submit" id="btnDoctor">Guardar doctor</button>
-        <button type="button" class="btn-warning" onclick="limpiarDoctor()">Cancelar edición</button>
-    </form>
-
-    <div id="resultadoDoctor" class="result"></div>
-
-    <h3>Doctores registrados</h3>
-    <div id="listaDoctores" class="grid"></div>
-
-    <h3>Tabla de doctores</h3>
-    <div class="table-wrap">
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th><th>Nombre</th><th>Especialidad</th><th>Consultorio</th><th>Estado</th><th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody id="tbodyDoctores"></tbody>
-        </table>
-    </div>
-</section>
-
-<section class="section">
-    <div class="section-title"><h2>Formulario Cita Médica</h2></div>
-
-    <form onsubmit="guardarCita(event)">
-        <input type="hidden" id="citaId">
-
-        <div class="form-grid">
-            <div>
-                <label>Paciente</label>
-                <select id="citaPaciente" required></select>
-            </div>
-            <div>
-                <label>Doctor</label>
-                <select id="citaDoctor" required></select>
-            </div>
-            <div>
-                <label>Tipo de consulta</label>
-                <select id="citaTipo" required>
-                    <option value="GENERAL">General</option>
-                    <option value="ODONTOLOGIA">Odontología</option>
-                    <option value="PEDIATRIA">Pediatría</option>
-                    <option value="MEDICINA_INTERNA">Medicina interna</option>
-                    <option value="DERMATOLOGIA">Dermatología</option>
-                </select>
-            </div>
-            <div>
-                <label>Fecha</label>
-                <input id="citaFecha" type="date" required>
-            </div>
-            <div>
-                <label>Hora</label>
-                <input id="citaHora" type="time" required>
-            </div>
+    <section class="section">
+        <div class="section-title">
+            <h2>Formulario Paciente</h2>
         </div>
 
-        <button type="submit" id="btnCita">Guardar cita</button>
-        <button type="button" class="btn-warning" onclick="limpiarCita()">Cancelar edición</button>
-    </form>
+        <form onsubmit="guardarPaciente(event)">
+            <input type="hidden" id="pacienteId">
 
-    <div id="resultadoCita" class="result"></div>
+            <div class="form-grid">
+                <div>
+                    <label>Nombre</label>
+                    <input id="nombre" required minlength="4" placeholder="Ej: Juan Pérez">
+                </div>
 
-    <h3>Citas registradas</h3>
-    <div class="table-wrap">
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th><th>Paciente</th><th>Doctor</th><th>Tipo</th><th>Fecha</th><th>Hora</th><th>Estado</th><th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody id="tbodyCitas"></tbody>
-        </table>
-    </div>
-</section>
+                <div>
+                    <label>Documento</label>
+                    <input id="documento" required minlength="5" placeholder="Ej: 1002456789">
+                </div>
 
-<section class="section">
-    <div class="section-title"><h2>Resultados de Búsqueda</h2></div>
+                <div>
+                    <label>Teléfono</label>
+                    <input id="telefono" required minlength="7" placeholder="Ej: 3004567890">
+                </div>
+            </div>
 
-    <h3>Pacientes</h3>
-    <div id="resultadosBusqueda" class="result"></div>
+            <button type="submit" id="btnPaciente">Guardar paciente</button>
+            <button type="button" class="btn-warning" onclick="limpiarPaciente()">Cancelar edición</button>
+        </form>
 
-    <h3>Doctores</h3>
-    <div id="resultadosBusquedaDoctor" class="result"></div>
-</section>
+        <div id="resultadoPaciente" class="result"></div>
+
+        <h3>Pacientes registrados</h3>
+
+        <div class="filters">
+            <input type="text" id="filtroPacientesLocal" placeholder="Filtrar tarjetas de pacientes..." onkeyup="filtrarCardsPacientes()">
+        </div>
+
+        <div id="cardsPacientes" class="cards-list"></div>
+    </section>
+
+    <section class="section">
+        <div class="section-title">
+            <h2>Formulario Doctor</h2>
+        </div>
+
+        <form onsubmit="guardarDoctor(event)">
+            <input type="hidden" id="doctorId">
+
+            <div class="form-grid">
+                <div>
+                    <label>Nombre del doctor</label>
+                    <input id="doctorNombre" required minlength="4" placeholder="Ej: Dra. Laura Gómez">
+                </div>
+
+                <div>
+                    <label>Especialidad</label>
+                    <select id="doctorEspecialidad" required>
+                        <option value="">Seleccione una especialidad</option>
+                        <option value="Medicina General">Medicina General</option>
+                        <option value="Odontologia">Odontología</option>
+                        <option value="Pediatria">Pediatría</option>
+                        <option value="Medicina Interna">Medicina Interna</option>
+                        <option value="Dermatologia">Dermatología</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Consultorio</label>
+                    <input id="doctorConsultorio" required minlength="1" maxlength="20" placeholder="Ej: 205">
+                </div>
+
+                <div>
+                    <label>URL de imagen</label>
+                    <input id="doctorImagen" required type="url" placeholder="https://placehold.co/300x200?text=Doctor">
+                </div>
+            </div>
+
+            <button type="submit" id="btnDoctor">Guardar doctor</button>
+            <button type="button" class="btn-warning" onclick="limpiarDoctor()">Cancelar edición</button>
+        </form>
+
+        <div id="resultadoDoctor" class="result"></div>
+
+        <h3>Doctores registrados</h3>
+
+        <div class="filters">
+            <input type="text" id="filtroDoctoresLocal" placeholder="Filtrar tarjetas de doctores..." onkeyup="filtrarCardsDoctores()">
+        </div>
+
+        <div id="cardsDoctores" class="cards-list"></div>
+    </section>
+
+    <section class="section">
+        <div class="section-title">
+            <h2>Formulario Cita Médica</h2>
+        </div>
+
+        <form onsubmit="guardarCita(event)">
+            <input type="hidden" id="citaId">
+
+            <div class="form-grid">
+                <div>
+                    <label>Paciente</label>
+                    <select id="citaPaciente" required></select>
+                </div>
+
+                <div>
+                    <label>Doctor</label>
+                    <select id="citaDoctor" required></select>
+                </div>
+
+                <div>
+                    <label>Tipo de consulta</label>
+                    <select id="citaTipo" required>
+                        <option value="GENERAL">General</option>
+                        <option value="ODONTOLOGIA">Odontología</option>
+                        <option value="PEDIATRIA">Pediatría</option>
+                        <option value="MEDICINA_INTERNA">Medicina interna</option>
+                        <option value="DERMATOLOGIA">Dermatología</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Fecha</label>
+                    <input id="citaFecha" type="date" required>
+                </div>
+
+                <div>
+                    <label>Hora</label>
+                    <input id="citaHora" type="time" required>
+                </div>
+            </div>
+
+            <button type="submit" id="btnCita">Guardar cita</button>
+            <button type="button" class="btn-warning" onclick="limpiarCita()">Cancelar edición</button>
+        </form>
+
+        <div id="resultadoCita" class="result"></div>
+
+        <h3>Citas registradas</h3>
+
+        <div class="filters">
+            <input type="text" id="filtroCitasLocal" placeholder="Filtrar tarjetas de citas..." onkeyup="filtrarCardsCitas()">
+        </div>
+
+        <div id="cardsCitas" class="cards-list"></div>
+    </section>
+
+    <section class="section">
+        <div class="section-title">
+            <h2>Resultados de búsqueda</h2>
+        </div>
+
+        <h3>Pacientes</h3>
+        <div id="resultadosBusqueda" class="result"></div>
+
+        <h3>Doctores</h3>
+        <div id="resultadosBusquedaDoctor" class="result"></div>
+    </section>
 
 </main>
 
@@ -274,6 +610,10 @@ let graficaEspecialidades = null;
 let graficaDoctores = null;
 let graficaPacientes = null;
 let graficaTiposConsulta = null;
+
+let pacientesGlobal = [];
+let doctoresGlobal = [];
+let citasGlobal = [];
 
 async function iniciarPagina() {
     await refrescarTodo();
@@ -295,6 +635,7 @@ async function refrescarTodo() {
 
 function mostrarResultado(id, data) {
     const elemento = document.getElementById(id);
+
     if (data.message) {
         elemento.innerHTML = `<span class="error">${data.message}</span>`;
     } else {
@@ -302,7 +643,13 @@ function mostrarResultado(id, data) {
     }
 }
 
-/* ================= PACIENTES CRUD ================= */
+function textoSeguro(valor) {
+    return String(valor ?? "").replace(/'/g, "\\'");
+}
+
+/* =========================
+   PACIENTES CRUD
+========================= */
 
 async function guardarPaciente(event) {
     event.preventDefault();
@@ -340,7 +687,11 @@ function editarPaciente(id, nombre, documento, telefono) {
     document.getElementById("documento").value = documento;
     document.getElementById("telefono").value = telefono;
     document.getElementById("btnPaciente").innerText = "Actualizar paciente";
-    window.scrollTo({top: document.getElementById("nombre").offsetTop - 120, behavior: "smooth"});
+
+    window.scrollTo({
+        top: document.getElementById("nombre").offsetTop - 140,
+        behavior: "smooth"
+    });
 }
 
 async function eliminarPaciente(id) {
@@ -348,6 +699,7 @@ async function eliminarPaciente(id) {
 
     const response = await fetch(`/pacientes/${id}`, { method: "DELETE" });
     const data = await response.json();
+
     mostrarResultado("resultadoPaciente", data);
     await refrescarTodo();
 }
@@ -362,73 +714,62 @@ function limpiarPaciente() {
 
 async function cargarPacientes() {
     const response = await fetch("/pacientes");
-    const pacientes = await response.json();
+    pacientesGlobal = await response.json();
+    renderPacientes(pacientesGlobal);
+}
 
-    const tbody = document.getElementById("tbodyPacientes");
-    tbody.innerHTML = "";
+function renderPacientes(pacientes) {
+    const contenedor = document.getElementById("cardsPacientes");
+    contenedor.innerHTML = "";
 
     pacientes.forEach(p => {
-        tbody.innerHTML += `
-            <tr>
-                <td>${p.id}</td>
-                <td>${p.nombre}</td>
-                <td>${p.documento}</td>
-                <td>${p.telefono}</td>
-                <td><span class="badge ${p.estado === "INACTIVO" ? "badge-inactivo" : ""}">${p.estado}</span></td>
-                <td>
-                    <div class="actions">
-                        <button class="btn-warning" onclick="editarPaciente(${p.id}, '${p.nombre}', '${p.documento}', '${p.telefono}')">Editar</button>
-                        <button class="btn-danger" onclick="eliminarPaciente(${p.id})">Eliminar</button>
-                    </div>
-                </td>
-            </tr>
+        contenedor.innerHTML += `
+            <div class="record-card" data-search="${p.nombre} ${p.documento} ${p.telefono} ${p.estado}">
+                <div class="record-header">
+                    <h3>${p.nombre}</h3>
+                    <span class="badge ${p.estado === "INACTIVO" ? "badge-inactivo" : ""}">${p.estado}</span>
+                </div>
+
+                <div class="record-meta">
+                    <span><strong>ID:</strong> ${p.id}</span>
+                    <span><strong>Documento:</strong> ${p.documento}</span>
+                    <span><strong>Teléfono:</strong> ${p.telefono}</span>
+                </div>
+
+                <div class="actions">
+                    <button class="btn-warning" onclick="editarPaciente(${p.id}, '${textoSeguro(p.nombre)}', '${textoSeguro(p.documento)}', '${textoSeguro(p.telefono)}')">Editar</button>
+                    <button class="btn-danger" onclick="eliminarPaciente(${p.id})">Eliminar</button>
+                </div>
+            </div>
         `;
     });
 }
 
-/* ================= DOCTORES CRUD ================= */
+function filtrarCardsPacientes() {
+    const filtro = document.getElementById("filtroPacientesLocal").value.toLowerCase();
+
+    const filtrados = pacientesGlobal.filter(p =>
+        `${p.nombre} ${p.documento} ${p.telefono} ${p.estado}`.toLowerCase().includes(filtro)
+    );
+
+    renderPacientes(filtrados);
+}
+
+/* =========================
+   DOCTORES CRUD
+========================= */
 
 async function guardarDoctor(event) {
     event.preventDefault();
 
     const id = document.getElementById("doctorId").value;
-    const archivo =
-    document.getElementById("doctorImagenArchivo")
-    .files[0];
-
-const formData = new FormData();
-
-formData.append(
-    "file",
-    archivo
-);
-
-const uploadResponse = await fetch(
-    "/upload-imagen",
-    {
-        method: "POST",
-        body: formData
-    }
-);
-
-const uploadData =
-    await uploadResponse.json();
-
-if (!uploadResponse.ok) {
-
-    mostrarResultado(
-        "resultadoDoctor",
-        uploadData
-    );
-
-    return;
-}
 
     const doctor = {
         nombre: document.getElementById("doctorNombre").value,
         especialidad: document.getElementById("doctorEspecialidad").value,
         consultorio: document.getElementById("doctorConsultorio").value,
-       imagen_url:uploadData.imagen_url,
+        imagen_url: document.getElementById("doctorImagen").value,
+        estado: "ACTIVO"
     };
 
     const url = id ? `/doctores/${id}` : "/doctores";
@@ -456,7 +797,11 @@ function editarDoctor(id, nombre, especialidad, consultorio, imagenUrl) {
     document.getElementById("doctorConsultorio").value = consultorio;
     document.getElementById("doctorImagen").value = imagenUrl;
     document.getElementById("btnDoctor").innerText = "Actualizar doctor";
-    window.scrollTo({top: document.getElementById("doctorNombre").offsetTop - 120, behavior: "smooth"});
+
+    window.scrollTo({
+        top: document.getElementById("doctorNombre").offsetTop - 140,
+        behavior: "smooth"
+    });
 }
 
 async function eliminarDoctor(id) {
@@ -464,6 +809,7 @@ async function eliminarDoctor(id) {
 
     const response = await fetch(`/doctores/${id}`, { method: "DELETE" });
     const data = await response.json();
+
     mostrarResultado("resultadoDoctor", data);
     await refrescarTodo();
 }
@@ -479,44 +825,52 @@ function limpiarDoctor() {
 
 async function cargarDoctores() {
     const response = await fetch("/doctores");
-    const doctores = await response.json();
+    doctoresGlobal = await response.json();
+    renderDoctores(doctoresGlobal);
+}
 
-    const contenedor = document.getElementById("listaDoctores");
-    const tbody = document.getElementById("tbodyDoctores");
-
+function renderDoctores(doctores) {
+    const contenedor = document.getElementById("cardsDoctores");
     contenedor.innerHTML = "";
-    tbody.innerHTML = "";
 
     doctores.forEach(d => {
         contenedor.innerHTML += `
-            <div class="card">
+            <div class="record-card" data-search="${d.nombre} ${d.especialidad} ${d.consultorio} ${d.estado}">
                 <img class="doctor-img" src="${d.imagen_url}" alt="${d.nombre}">
-                <h2>${d.nombre}</h2>
-                <p><strong>Especialidad:</strong> ${d.especialidad}</p>
-                <p><strong>Consultorio:</strong> ${d.consultorio}</p>
-                <p><strong>Estado:</strong> <span class="badge ${d.estado === "INACTIVO" ? "badge-inactivo" : ""}">${d.estado}</span></p>
-            </div>
-        `;
 
-        tbody.innerHTML += `
-            <tr>
-                <td>${d.id}</td>
-                <td>${d.nombre}</td>
-                <td>${d.especialidad}</td>
-                <td>${d.consultorio}</td>
-                <td><span class="badge ${d.estado === "INACTIVO" ? "badge-inactivo" : ""}">${d.estado}</span></td>
-                <td>
-                    <div class="actions">
-                        <button class="btn-warning" onclick="editarDoctor(${d.id}, '${d.nombre}', '${d.especialidad}', '${d.consultorio}', '${d.imagen_url}')">Editar</button>
-                        <button class="btn-danger" onclick="eliminarDoctor(${d.id})">Eliminar</button>
-                    </div>
-                </td>
-            </tr>
+                <div class="record-header">
+                    <h3>${d.nombre}</h3>
+                    <span class="badge ${d.estado === "INACTIVO" ? "badge-inactivo" : ""}">${d.estado}</span>
+                </div>
+
+                <div class="record-meta">
+                    <span><strong>ID:</strong> ${d.id}</span>
+                    <span><strong>Especialidad:</strong> ${d.especialidad}</span>
+                    <span><strong>Consultorio:</strong> ${d.consultorio}</span>
+                </div>
+
+                <div class="actions">
+                    <button class="btn-warning" onclick="editarDoctor(${d.id}, '${textoSeguro(d.nombre)}', '${textoSeguro(d.especialidad)}', '${textoSeguro(d.consultorio)}', '${textoSeguro(d.imagen_url)}')">Editar</button>
+                    <button class="btn-danger" onclick="eliminarDoctor(${d.id})">Eliminar</button>
+                </div>
+            </div>
         `;
     });
 }
 
-/* ================= CITAS CRUD ================= */
+function filtrarCardsDoctores() {
+    const filtro = document.getElementById("filtroDoctoresLocal").value.toLowerCase();
+
+    const filtrados = doctoresGlobal.filter(d =>
+        `${d.nombre} ${d.especialidad} ${d.consultorio} ${d.estado}`.toLowerCase().includes(filtro)
+    );
+
+    renderDoctores(filtrados);
+}
+
+/* =========================
+   CITAS CRUD
+========================= */
 
 async function guardarCita(event) {
     event.preventDefault();
@@ -566,7 +920,11 @@ function editarCita(id, pacienteId, doctorId, tipo, fecha, hora) {
     document.getElementById("citaFecha").value = fecha;
     document.getElementById("citaHora").value = hora;
     document.getElementById("btnCita").innerText = "Actualizar cita";
-    window.scrollTo({top: document.getElementById("citaPaciente").offsetTop - 120, behavior: "smooth"});
+
+    window.scrollTo({
+        top: document.getElementById("citaPaciente").offsetTop - 140,
+        behavior: "smooth"
+    });
 }
 
 async function eliminarCita(id) {
@@ -574,6 +932,7 @@ async function eliminarCita(id) {
 
     const response = await fetch(`/citas/${id}`, { method: "DELETE" });
     const data = await response.json();
+
     mostrarResultado("resultadoCita", data);
     await refrescarTodo();
 }
@@ -590,47 +949,64 @@ function limpiarCita() {
 
 async function cargarCitas() {
     const response = await fetch("/citas");
-    const citas = await response.json();
+    citasGlobal = await response.json();
+    renderCitas(citasGlobal);
+}
 
-    const pacientes = await (await fetch("/pacientes")).json();
-    const doctores = await (await fetch("/doctores")).json();
-
-    const tbody = document.getElementById("tbodyCitas");
-    tbody.innerHTML = "";
+function renderCitas(citas) {
+    const contenedor = document.getElementById("cardsCitas");
+    contenedor.innerHTML = "";
 
     citas.slice().reverse().forEach(c => {
-        const paciente = pacientes.find(p => p.id === c.paciente_id);
-        const doctor = doctores.find(d => d.id === c.doctor_id);
+        const paciente = pacientesGlobal.find(p => p.id === c.paciente_id);
+        const doctor = doctoresGlobal.find(d => d.id === c.doctor_id);
 
-        tbody.innerHTML += `
-            <tr>
-                <td>${c.id}</td>
-                <td>${paciente ? paciente.nombre : c.paciente_id}</td>
-                <td>${doctor ? doctor.nombre : c.doctor_id}</td>
-                <td>${c.tipo_consulta}</td>
-                <td>${c.fecha}</td>
-                <td>${c.hora}</td>
-                <td><span class="badge ${c.estado === "INACTIVO" ? "badge-inactivo" : ""}">${c.estado}</span></td>
-                <td>
-                    <div class="actions">
-                        <button class="btn-warning" onclick="editarCita(${c.id}, ${c.paciente_id}, ${c.doctor_id}, '${c.tipo_consulta}', '${c.fecha}', '${c.hora}')">Editar</button>
-                        <button class="btn-danger" onclick="eliminarCita(${c.id})">Eliminar</button>
-                    </div>
-                </td>
-            </tr>
+        contenedor.innerHTML += `
+            <div class="record-card" data-search="${paciente ? paciente.nombre : c.paciente_id} ${doctor ? doctor.nombre : c.doctor_id} ${c.tipo_consulta} ${c.fecha} ${c.hora} ${c.estado}">
+                <div class="record-header">
+                    <h3>Cita #${c.id}</h3>
+                    <span class="badge ${c.estado === "INACTIVO" ? "badge-inactivo" : ""}">${c.estado}</span>
+                </div>
+
+                <div class="record-meta">
+                    <span><strong>Paciente:</strong> ${paciente ? paciente.nombre : c.paciente_id}</span>
+                    <span><strong>Doctor:</strong> ${doctor ? doctor.nombre : c.doctor_id}</span>
+                    <span><strong>Tipo:</strong> ${c.tipo_consulta}</span>
+                    <span><strong>Fecha:</strong> ${c.fecha}</span>
+                    <span><strong>Hora:</strong> ${c.hora}</span>
+                </div>
+
+                <div class="actions">
+                    <button class="btn-warning" onclick="editarCita(${c.id}, ${c.paciente_id}, ${c.doctor_id}, '${textoSeguro(c.tipo_consulta)}', '${textoSeguro(c.fecha)}', '${textoSeguro(c.hora)}')">Editar</button>
+                    <button class="btn-danger" onclick="eliminarCita(${c.id})">Cancelar</button>
+                </div>
+            </div>
         `;
     });
 }
 
-/* ================= SELECTS ================= */
+function filtrarCardsCitas() {
+    const filtro = document.getElementById("filtroCitasLocal").value.toLowerCase();
+
+    const filtradas = citasGlobal.filter(c => {
+        const paciente = pacientesGlobal.find(p => p.id === c.paciente_id);
+        const doctor = doctoresGlobal.find(d => d.id === c.doctor_id);
+
+        return `${paciente ? paciente.nombre : c.paciente_id} ${doctor ? doctor.nombre : c.doctor_id} ${c.tipo_consulta} ${c.fecha} ${c.hora} ${c.estado}`.toLowerCase().includes(filtro);
+    });
+
+    renderCitas(filtradas);
+}
+
+/* =========================
+   SELECTS
+========================= */
 
 async function cargarPacientesSelect() {
-    const pacientes = await (await fetch("/pacientes")).json();
     const select = document.getElementById("citaPaciente");
-
     select.innerHTML = '<option value="">Seleccione un paciente</option>';
 
-    pacientes
+    pacientesGlobal
         .filter(p => p.estado === "ACTIVO")
         .forEach(p => {
             select.innerHTML += `<option value="${p.id}">${p.nombre} - Doc: ${p.documento}</option>`;
@@ -638,19 +1014,19 @@ async function cargarPacientesSelect() {
 }
 
 async function cargarDoctoresSelect() {
-    const doctores = await (await fetch("/doctores")).json();
     const select = document.getElementById("citaDoctor");
-
     select.innerHTML = '<option value="">Seleccione un doctor</option>';
 
-    doctores
+    doctoresGlobal
         .filter(d => d.estado === "ACTIVO")
         .forEach(d => {
             select.innerHTML += `<option value="${d.id}">${d.nombre} - ${d.especialidad}</option>`;
         });
 }
 
-/* ================= BÚSQUEDAS ================= */
+/* =========================
+   BÚSQUEDAS NAVBAR
+========================= */
 
 async function buscarPaciente() {
     const nombre = document.getElementById("buscador").value;
@@ -676,7 +1052,9 @@ async function buscarDoctor() {
     document.getElementById("resultadosBusquedaDoctor").innerText = JSON.stringify(data, null, 2);
 }
 
-/* ================= DASHBOARD ================= */
+/* =========================
+   DASHBOARD
+========================= */
 
 async function cargarResumen() {
     const data = await (await fetch("/hallazgos/resumen")).json();
@@ -696,7 +1074,13 @@ async function cargarEspecialidades() {
 
     graficaEspecialidades = new Chart(document.getElementById("graficaEspecialidades"), {
         type: "bar",
-        data: { labels, datasets: [{ label: "Citas por especialidad", data: values }] }
+        data: {
+            labels,
+            datasets: [{
+                label: "Citas por especialidad",
+                data: values
+            }]
+        }
     });
 }
 
@@ -710,7 +1094,10 @@ async function cargarDoctoresTop() {
         type: "bar",
         data: {
             labels: top.map(i => i.doctor),
-            datasets: [{ label: "Citas por doctor", data: top.map(i => i.cantidad_citas) }]
+            datasets: [{
+                label: "Citas por doctor",
+                data: top.map(i => i.cantidad_citas)
+            }]
         }
     });
 }
@@ -725,7 +1112,10 @@ async function cargarPacientesFrecuentes() {
         type: "bar",
         data: {
             labels: top.map(i => i.paciente),
-            datasets: [{ label: "Citas por paciente", data: top.map(i => i.cantidad_citas) }]
+            datasets: [{
+                label: "Citas por paciente",
+                data: top.map(i => i.cantidad_citas)
+            }]
         }
     });
 }
@@ -739,7 +1129,10 @@ async function cargarTiposConsulta() {
         type: "pie",
         data: {
             labels: data.map(i => i.tipo_consulta),
-            datasets: [{ label: "Tipos de consulta", data: data.map(i => i.cantidad_citas) }]
+            datasets: [{
+                label: "Tipos de consulta",
+                data: data.map(i => i.cantidad_citas)
+            }]
         }
     });
 }
