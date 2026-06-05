@@ -1,7 +1,7 @@
 import random
-import pandas as pd
 
-from sqlmodel import Session, SQLModel
+import pandas as pd
+from sqlmodel import Session, SQLModel, select
 
 from db import engine
 from model import PacienteID, DoctorID, CitaID
@@ -55,19 +55,32 @@ def cargar_dataset():
 
     SQLModel.metadata.create_all(engine)
 
-    print("Leyendo dataset...")
-
-    df = pd.read_csv(CSV_PATH)
-    df = df.head(300)
-
     with Session(engine) as session:
+
+        # Evitar duplicados al reiniciar Render
+        existe_cita = session.exec(
+            select(CitaID)
+        ).first()
+
+        if existe_cita:
+            print("Dataset ya cargado. No se duplican datos.")
+            return
+
+        print("Leyendo dataset...")
+
+        df = pd.read_csv(CSV_PATH)
+        df = df.head(300)
+
         doctores = cargar_doctores(session)
+
         pacientes_creados = {}
 
         for _, row in df.iterrows():
+
             patient_id = int(row["PatientId"])
 
             if patient_id not in pacientes_creados:
+
                 paciente = PacienteID(
                     nombre=f"Paciente {patient_id}",
                     documento=str(patient_id),
@@ -88,7 +101,7 @@ def cargar_dataset():
                 doctor_id=doctor.id,
                 tipo_consulta=random.choice(TIPOS_CONSULTA),
                 fecha=str(row["AppointmentDay"])[:10],
-                hora=f"{random.randint(7, 16)}:00",
+                hora=f"{random.randint(7,16)}:00",
                 estado=EstadoRegistro.ACTIVO,
             )
 
