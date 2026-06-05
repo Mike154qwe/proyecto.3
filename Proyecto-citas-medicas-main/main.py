@@ -335,8 +335,7 @@ async def hallazgos_tipos_consulta(session: SessionDep):
     ]
 
 
-    
-    @app.post("/upload-imagen")
+@app.post("/upload-imagen")
 async def upload_imagen(file: UploadFile = File(...)):
     allowed_types = ["image/jpeg", "image/png", "image/webp"]
 
@@ -355,7 +354,6 @@ async def upload_imagen(file: UploadFile = File(...)):
     return {
         "imagen_url": f"/static/uploads/{filename}"
     }
-
 
 
     
