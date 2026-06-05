@@ -319,8 +319,7 @@ async def hallazgos_tipos_consulta(session: SessionDep):
         for tipo, cantidad in conteo.items()
     ]
 
-
-    @app.post("/upload-imagen")
+@app.post("/upload-imagen")
 async def upload_imagen(file: UploadFile = File(...)):
 
     allowed_types = [
@@ -328,7 +327,6 @@ async def upload_imagen(file: UploadFile = File(...)):
         "image/png",
         "image/webp"
     ]
-
     if file.content_type not in allowed_types:
         raise HTTPException(
             status_code=400,
