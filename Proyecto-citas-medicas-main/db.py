@@ -1,4 +1,5 @@
 import os
+from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 from sqlmodel import Session, SQLModel, create_engine
 from typing import Annotated
@@ -12,7 +13,8 @@ connect_args = {"check_same_thread": False} if database_url.startswith("sqlite")
 engine = create_engine(database_url, echo=False, connect_args=connect_args)
 
 
-def create_all_tables(app: FastAPI):
+@asynccontextmanager
+async def create_all_tables(app: FastAPI):
     SQLModel.metadata.create_all(engine)
     yield
 
