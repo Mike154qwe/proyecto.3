@@ -74,8 +74,12 @@ async def create_paciente(paciente: PacienteBase, session: SessionDep):
 
 
 @app.get("/pacientes", response_model=list[PacienteID])
-async def get_pacientes(session: SessionDep):
-    return all_pacientes_db(session)
+async def get_pacientes(
+    session: SessionDep,
+    offset: int = Query(default=0, ge=0),
+    limit: int = Query(default=20, ge=1, le=100)
+):
+    return all_pacientes_db(session, offset=offset, limit=limit)
 
 
 @app.get("/pacientes/buscar/", response_model=list[PacienteID])
@@ -175,8 +179,12 @@ async def create_cita(cita: CitaBase, session: SessionDep):
 
 
 @app.get("/citas", response_model=list[CitaID])
-async def get_citas(session: SessionDep):
-    return all_citas_db(session)
+async def get_citas(
+    session: SessionDep,
+    offset: int = Query(default=0, ge=0),
+    limit: int = Query(default=20, ge=1, le=100)
+):
+    return all_citas_db(session, offset=offset, limit=limit)
 
 
 @app.get("/citas/buscar/", response_model=list[CitaID])
