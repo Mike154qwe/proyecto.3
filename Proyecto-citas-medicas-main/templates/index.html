@@ -2,1140 +2,234 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Citas Médicas</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
         body {
-            font-family: "Segoe UI", Arial, sans-serif;
-            background: #eef5fb;
-            color: #1f2937;
-        }
-
-        nav {
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            background: #0f172a;
-            color: white;
-            padding: 16px 40px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 20px;
-            flex-wrap: wrap;
-            box-shadow: 0 4px 18px rgba(15, 23, 42, .25);
-        }
-
-        nav strong {
-            font-size: 20px;
-        }
-
-        .nav-search {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .nav-search input {
-            width: 260px;
-            padding: 11px 14px;
-            border-radius: 10px;
-            border: none;
-            outline: none;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f4f6f8;
+            color: #222;
         }
 
         header {
-            background: linear-gradient(135deg, #0284c7, #2563eb, #1e40af);
+            background: #2563eb;
             color: white;
-            padding: 70px 20px;
+            padding: 20px;
             text-align: center;
         }
 
-        header h1 {
-            font-size: 44px;
-            margin-bottom: 14px;
-        }
-
-        header p {
-            font-size: 18px;
-            max-width: 850px;
-            margin: auto;
-        }
-
-        .container {
-            max-width: 1250px;
-            margin: 35px auto;
-            padding: 0 20px;
-        }
-
-        .section {
-            background: white;
-            padding: 28px;
-            border-radius: 22px;
-            box-shadow: 0 10px 28px rgba(15, 23, 42, .08);
-            margin-bottom: 28px;
-        }
-
-        .section-title {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 15px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #e5e7eb;
-            padding-bottom: 15px;
+        main {
+            padding: 25px;
         }
 
         h2 {
-            color: #1d4ed8;
-            font-size: 24px;
+            margin-top: 30px;
         }
 
-        h3 {
-            color: #0f172a;
-            margin: 25px 0 12px;
+        .filtros {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        input, select, button {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            cursor: pointer;
+            background: #2563eb;
+            color: white;
+            border: none;
+        }
+
+        button:hover {
+            background: #1e40af;
         }
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 15px;
         }
 
-        .card {
-            background: #fff;
-            border: 1px solid #e5e7eb;
-            padding: 22px;
-            border-radius: 18px;
-            box-shadow: 0 8px 20px rgba(15, 23, 42, .06);
-        }
-
-        .feature-card {
-            border-left: 5px solid #2563eb;
-        }
-
-        .kpi-card {
-            text-align: center;
-            background: linear-gradient(180deg, #fff, #f8fafc);
-        }
-
-        .kpi-card h2 {
-            font-size: 42px;
-            margin-bottom: 6px;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-            gap: 16px;
-        }
-
-        label {
-            font-weight: 700;
-            display: block;
-            margin-bottom: 7px;
-            color: #334155;
-        }
-
-        input,
-        select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #cbd5e1;
+        .tarjeta {
+            background: white;
+            padding: 15px;
             border-radius: 10px;
-            outline: none;
-            font-size: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
 
-        input:focus,
-        select:focus {
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, .12);
+        .tarjeta h3 {
+            margin-top: 0;
+            color: #2563eb;
         }
 
-        button,
-        .btn {
-            padding: 10px 14px;
-            border: none;
-            border-radius: 10px;
-            background: #2563eb;
-            color: white;
-            font-weight: 700;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 10px;
-            transition: .2s;
+        .paginacion {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
         }
 
-        button:hover,
-        .btn:hover {
-            background: #1d4ed8;
-            transform: translateY(-1px);
-        }
-
-        .btn-dark {
-            background: #0f172a;
-            margin-top: 24px;
-        }
-
-        .btn-danger {
-            background: #dc2626;
-        }
-
-        .btn-danger:hover {
-            background: #b91c1c;
-        }
-
-        .btn-warning {
-            background: #f59e0b;
-        }
-
-        .btn-warning:hover {
-            background: #d97706;
-        }
-
-        .result {
-            margin-top: 18px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            padding: 14px;
-            border-radius: 12px;
-            white-space: pre-wrap;
-            overflow-x: auto;
-            font-size: 14px;
-        }
-
-        .error {
-            color: #dc2626;
+        .estado-activo {
+            color: green;
             font-weight: bold;
         }
 
-        .success {
-            color: #16a34a;
+        .estado-inactivo {
+            color: red;
             font-weight: bold;
-        }
-
-        .badge {
-            padding: 5px 10px;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: bold;
-            background: #dcfce7;
-            color: #166534;
-            display: inline-block;
-        }
-
-        .badge-inactivo {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .actions {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-top: 14px;
-        }
-
-        .cards-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 18px;
-            margin-top: 18px;
-        }
-
-        .record-card {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 18px;
-            padding: 18px;
-            transition: .2s;
-        }
-
-        .record-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 18px rgba(15, 23, 42, .08);
-        }
-
-        .record-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 12px;
-            margin-bottom: 12px;
-        }
-
-        .record-header h3 {
-            margin: 0;
-            color: #1d4ed8;
-        }
-
-        .record-meta {
-            display: grid;
-            gap: 7px;
-            font-size: 14px;
-        }
-
-        .record-meta span {
-            color: #475569;
-        }
-
-        .doctor-img {
-            width: 100%;
-            height: 170px;
-            object-fit: cover;
-            border-radius: 14px;
-            background: #e5e7eb;
-            margin-bottom: 14px;
-        }
-
-        .filters {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-        }
-
-        .filters input {
-            max-width: 320px;
-        }
-
-        .chart-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
-            gap: 24px;
-        }
-
-        .chart-card {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 18px;
-            padding: 20px;
-        }
-
-        canvas {
-            margin-top: 10px;
-            max-height: 360px;
-        }
-
-        footer {
-            text-align: center;
-            color: #64748b;
-            padding: 30px;
-        }
-
-        @media (max-width: 650px) {
-            header h1 {
-                font-size: 32px;
-            }
-
-            nav {
-                padding: 14px 20px;
-            }
-
-            .nav-search input {
-                width: 100%;
-            }
-
-            .chart-grid {
-                grid-template-columns: 1fr;
-            }
         }
     </style>
 </head>
 
-<body onload="iniciarPagina();">
-
-<nav>
-    <strong>Citas Médicas</strong>
-
-    <div class="nav-search">
-        <input type="text" id="buscador" placeholder="Buscar paciente..." onkeyup="buscarPaciente()">
-        <input type="text" id="buscadorDoctor" placeholder="Buscar especialidad..." onkeyup="buscarDoctor()">
-    </div>
-</nav>
+<body>
 
 <header>
     <h1>Sistema de Gestión de Citas Médicas</h1>
-    <p>
-        CRUD completo para pacientes, doctores y citas médicas con dashboard,
-        dataset histórico, multimedia, búsquedas y reglas de negocio.
-    </p>
-    <a class="btn btn-dark" href="/docs">Ver documentación Swagger</a>
 </header>
 
-<main class="container">
+<main>
 
-    <section class="grid">
-        <div class="card feature-card">
-            <h2>Pacientes</h2>
-            <p>Crear, consultar, editar e inactivar pacientes.</p>
+    <section>
+        <h2>Pacientes</h2>
+
+        <div class="filtros">
+            <input
+                type="text"
+                id="buscarPaciente"
+                placeholder="Buscar paciente por nombre"
+            >
+
+            <select id="estadoPaciente">
+                <option value="">Todos</option>
+                <option value="ACTIVO">Activos</option>
+                <option value="INACTIVO">Inactivos</option>
+            </select>
+
+            <button onclick="filtrarPacientes()">Filtrar</button>
+            <button onclick="limpiarFiltrosPacientes()">Limpiar</button>
         </div>
 
-        <div class="card feature-card">
-            <h2>Doctores</h2>
-            <p>CRUD con imagen, especialidad y consultorio.</p>
+        <div id="contenedorPacientes" class="grid"></div>
+
+        <div class="paginacion">
+            <button onclick="paginaAnteriorPacientes()">Anterior</button>
+            <span id="paginaPacientes">Página 1</span>
+            <button onclick="paginaSiguientePacientes()">Siguiente</button>
         </div>
-
-        <div class="card feature-card">
-            <h2>Citas</h2>
-            <p>Agendar, consultar, reprogramar y cancelar citas.</p>
-        </div>
-    </section>
-
-    <section class="section">
-        <div class="section-title">
-            <h2>Dashboard General</h2>
-        </div>
-
-        <div class="grid">
-            <div class="card kpi-card">
-                <h2 id="kpiPacientes">0</h2>
-                <p>Total pacientes</p>
-            </div>
-
-            <div class="card kpi-card">
-                <h2 id="kpiDoctores">0</h2>
-                <p>Total doctores</p>
-            </div>
-
-            <div class="card kpi-card">
-                <h2 id="kpiCitas">0</h2>
-                <p>Total citas</p>
-            </div>
-        </div>
-
-        <div id="resumen" class="result"></div>
-
-        <div class="chart-grid">
-            <div class="chart-card">
-                <h3>Especialidades más solicitadas</h3>
-                <canvas id="graficaEspecialidades"></canvas>
-            </div>
-
-            <div class="chart-card">
-                <h3>Doctores con más citas</h3>
-                <canvas id="graficaDoctores"></canvas>
-            </div>
-
-            <div class="chart-card">
-                <h3>Pacientes frecuentes</h3>
-                <canvas id="graficaPacientes"></canvas>
-            </div>
-
-            <div class="chart-card">
-                <h3>Tipos de consulta</h3>
-                <canvas id="graficaTiposConsulta"></canvas>
-            </div>
-        </div>
-    </section>
-
-    <section class="section">
-        <div class="section-title">
-            <h2>Formulario Paciente</h2>
-        </div>
-
-        <form onsubmit="guardarPaciente(event)">
-            <input type="hidden" id="pacienteId">
-
-            <div class="form-grid">
-                <div>
-                    <label>Nombre</label>
-                    <input id="nombre" required minlength="4" placeholder="Ej: Juan Pérez">
-                </div>
-
-                <div>
-                    <label>Documento</label>
-                    <input id="documento" required minlength="5" placeholder="Ej: 1002456789">
-                </div>
-
-                <div>
-                    <label>Teléfono</label>
-                    <input id="telefono" required minlength="7" placeholder="Ej: 3004567890">
-                </div>
-            </div>
-
-            <button type="submit" id="btnPaciente">Guardar paciente</button>
-            <button type="button" class="btn-warning" onclick="limpiarPaciente()">Cancelar edición</button>
-        </form>
-
-        <div id="resultadoPaciente" class="result"></div>
-
-        <h3>Pacientes registrados</h3>
-
-        <div class="filters">
-            <input type="text" id="filtroPacientesLocal" placeholder="Filtrar tarjetas de pacientes..." onkeyup="filtrarCardsPacientes()">
-        </div>
-
-        <div id="cardsPacientes" class="cards-list"></div>
-    </section>
-
-    <section class="section">
-        <div class="section-title">
-            <h2>Formulario Doctor</h2>
-        </div>
-
-        <form onsubmit="guardarDoctor(event)">
-            <input type="hidden" id="doctorId">
-
-            <div class="form-grid">
-                <div>
-                    <label>Nombre del doctor</label>
-                    <input id="doctorNombre" required minlength="4" placeholder="Ej: Dra. Laura Gómez">
-                </div>
-
-                <div>
-                    <label>Especialidad</label>
-                    <select id="doctorEspecialidad" required>
-                        <option value="">Seleccione una especialidad</option>
-                        <option value="Medicina General">Medicina General</option>
-                        <option value="Odontologia">Odontología</option>
-                        <option value="Pediatria">Pediatría</option>
-                        <option value="Medicina Interna">Medicina Interna</option>
-                        <option value="Dermatologia">Dermatología</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label>Consultorio</label>
-                    <input id="doctorConsultorio" required minlength="1" maxlength="20" placeholder="Ej: 205">
-                </div>
-
-                <div>
-                    <label>URL de imagen</label>
-                    <input id="doctorImagen" required type="url" placeholder="https://placehold.co/300x200?text=Doctor">
-                </div>
-            </div>
-
-            <button type="submit" id="btnDoctor">Guardar doctor</button>
-            <button type="button" class="btn-warning" onclick="limpiarDoctor()">Cancelar edición</button>
-        </form>
-
-        <div id="resultadoDoctor" class="result"></div>
-
-        <h3>Doctores registrados</h3>
-
-        <div class="filters">
-            <input type="text" id="filtroDoctoresLocal" placeholder="Filtrar tarjetas de doctores..." onkeyup="filtrarCardsDoctores()">
-        </div>
-
-        <div id="cardsDoctores" class="cards-list"></div>
-    </section>
-
-    <section class="section">
-        <div class="section-title">
-            <h2>Formulario Cita Médica</h2>
-        </div>
-
-        <form onsubmit="guardarCita(event)">
-            <input type="hidden" id="citaId">
-
-            <div class="form-grid">
-                <div>
-                    <label>Paciente</label>
-                    <select id="citaPaciente" required></select>
-                </div>
-
-                <div>
-                    <label>Doctor</label>
-                    <select id="citaDoctor" required></select>
-                </div>
-
-                <div>
-                    <label>Tipo de consulta</label>
-                    <select id="citaTipo" required>
-                        <option value="GENERAL">General</option>
-                        <option value="ODONTOLOGIA">Odontología</option>
-                        <option value="PEDIATRIA">Pediatría</option>
-                        <option value="MEDICINA_INTERNA">Medicina interna</option>
-                        <option value="DERMATOLOGIA">Dermatología</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label>Fecha</label>
-                    <input id="citaFecha" type="date" required>
-                </div>
-
-                <div>
-                    <label>Hora</label>
-                    <input id="citaHora" type="time" required>
-                </div>
-            </div>
-
-            <button type="submit" id="btnCita">Guardar cita</button>
-            <button type="button" class="btn-warning" onclick="limpiarCita()">Cancelar edición</button>
-        </form>
-
-        <div id="resultadoCita" class="result"></div>
-
-        <h3>Citas registradas</h3>
-
-        <div class="filters">
-            <input type="text" id="filtroCitasLocal" placeholder="Filtrar tarjetas de citas..." onkeyup="filtrarCardsCitas()">
-        </div>
-
-        <div id="cardsCitas" class="cards-list"></div>
-    </section>
-
-    <section class="section">
-        <div class="section-title">
-            <h2>Resultados de búsqueda</h2>
-        </div>
-
-        <h3>Pacientes</h3>
-        <div id="resultadosBusqueda" class="result"></div>
-
-        <h3>Doctores</h3>
-        <div id="resultadosBusquedaDoctor" class="result"></div>
     </section>
 
 </main>
 
-<footer>
-    Proyecto académico - Sistema de Citas Médicas con FastAPI, PostgreSQL y Dashboard
-</footer>
-
 <script>
-let graficaEspecialidades = null;
-let graficaDoctores = null;
-let graficaPacientes = null;
-let graficaTiposConsulta = null;
+    let offsetPacientes = 0;
+    const limitPacientes = 12;
+    let paginaActualPacientes = 1;
+    let modoPacientes = "normal";
 
-let pacientesGlobal = [];
-let doctoresGlobal = [];
-let citasGlobal = [];
+    async function cargarPacientes() {
+        let url = "";
 
-async function iniciarPagina() {
-    await refrescarTodo();
-    document.getElementById("citaFecha").min = new Date().toISOString().split("T")[0];
-}
+        const nombre = document.getElementById("buscarPaciente").value.trim();
+        const estado = document.getElementById("estadoPaciente").value;
 
-async function refrescarTodo() {
-    await cargarPacientes();
-    await cargarPacientesSelect();
-    await cargarDoctores();
-    await cargarDoctoresSelect();
-    await cargarCitas();
-    await cargarResumen();
-    await cargarEspecialidades();
-    await cargarDoctoresTop();
-    await cargarPacientesFrecuentes();
-    await cargarTiposConsulta();
-}
+        if (modoPacientes === "buscar" && nombre) {
+            url = `/pacientes/buscar/?nombre=${encodeURIComponent(nombre)}&offset=${offsetPacientes}&limit=${limitPacientes}`;
+        } else if (modoPacientes === "filtrar" && estado) {
+            url = `/pacientes/filtrar/?estado=${estado}&offset=${offsetPacientes}&limit=${limitPacientes}`;
+        } else {
+            url = `/pacientes?offset=${offsetPacientes}&limit=${limitPacientes}`;
+        }
 
-function mostrarResultado(id, data) {
-    const elemento = document.getElementById(id);
+        const respuesta = await fetch(url);
+        const pacientes = await respuesta.json();
 
-    if (data.message) {
-        elemento.innerHTML = `<span class="error">${data.message}</span>`;
-    } else {
-        elemento.innerHTML = `<span class="success">Operación realizada correctamente.</span>\n\n${JSON.stringify(data, null, 2)}`;
-    }
-}
-
-function textoSeguro(valor) {
-    return String(valor ?? "").replace(/'/g, "\\'");
-}
-
-/* =========================
-   PACIENTES CRUD
-========================= */
-
-async function guardarPaciente(event) {
-    event.preventDefault();
-
-    const id = document.getElementById("pacienteId").value;
-
-    const paciente = {
-        nombre: document.getElementById("nombre").value,
-        documento: document.getElementById("documento").value,
-        telefono: document.getElementById("telefono").value,
-        estado: "ACTIVO"
-    };
-
-    const url = id ? `/pacientes/${id}` : "/pacientes";
-    const method = id ? "PATCH" : "POST";
-
-    const response = await fetch(url, {
-        method,
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(paciente)
-    });
-
-    const data = await response.json();
-    mostrarResultado("resultadoPaciente", data);
-
-    if (response.ok) {
-        limpiarPaciente();
-        await refrescarTodo();
-    }
-}
-
-function editarPaciente(id, nombre, documento, telefono) {
-    document.getElementById("pacienteId").value = id;
-    document.getElementById("nombre").value = nombre;
-    document.getElementById("documento").value = documento;
-    document.getElementById("telefono").value = telefono;
-    document.getElementById("btnPaciente").innerText = "Actualizar paciente";
-
-    window.scrollTo({
-        top: document.getElementById("nombre").offsetTop - 140,
-        behavior: "smooth"
-    });
-}
-
-async function eliminarPaciente(id) {
-    if (!confirm("¿Deseas inactivar este paciente?")) return;
-
-    const response = await fetch(`/pacientes/${id}`, { method: "DELETE" });
-    const data = await response.json();
-
-    mostrarResultado("resultadoPaciente", data);
-    await refrescarTodo();
-}
-
-function limpiarPaciente() {
-    document.getElementById("pacienteId").value = "";
-    document.getElementById("nombre").value = "";
-    document.getElementById("documento").value = "";
-    document.getElementById("telefono").value = "";
-    document.getElementById("btnPaciente").innerText = "Guardar paciente";
-}
-
-async function cargarPacientes() {
-    const response = await fetch("/pacientes");
-    pacientesGlobal = await response.json();
-    renderPacientes(pacientesGlobal);
-}
-
-function renderPacientes(pacientes) {
-    const contenedor = document.getElementById("cardsPacientes");
-    contenedor.innerHTML = "";
-
-    pacientes.forEach(p => {
-        contenedor.innerHTML += `
-            <div class="record-card" data-search="${p.nombre} ${p.documento} ${p.telefono} ${p.estado}">
-                <div class="record-header">
-                    <h3>${p.nombre}</h3>
-                    <span class="badge ${p.estado === "INACTIVO" ? "badge-inactivo" : ""}">${p.estado}</span>
-                </div>
-
-                <div class="record-meta">
-                    <span><strong>ID:</strong> ${p.id}</span>
-                    <span><strong>Documento:</strong> ${p.documento}</span>
-                    <span><strong>Teléfono:</strong> ${p.telefono}</span>
-                </div>
-
-                <div class="actions">
-                    <button class="btn-warning" onclick="editarPaciente(${p.id}, '${textoSeguro(p.nombre)}', '${textoSeguro(p.documento)}', '${textoSeguro(p.telefono)}')">Editar</button>
-                    <button class="btn-danger" onclick="eliminarPaciente(${p.id})">Eliminar</button>
-                </div>
-            </div>
-        `;
-    });
-}
-
-function filtrarCardsPacientes() {
-    const filtro = document.getElementById("filtroPacientesLocal").value.toLowerCase();
-
-    const filtrados = pacientesGlobal.filter(p =>
-        `${p.nombre} ${p.documento} ${p.telefono} ${p.estado}`.toLowerCase().includes(filtro)
-    );
-
-    renderPacientes(filtrados);
-}
-
-/* =========================
-   DOCTORES CRUD
-========================= */
-
-async function guardarDoctor(event) {
-    event.preventDefault();
-
-    const id = document.getElementById("doctorId").value;
-
-    const doctor = {
-        nombre: document.getElementById("doctorNombre").value,
-        especialidad: document.getElementById("doctorEspecialidad").value,
-        consultorio: document.getElementById("doctorConsultorio").value,
-        imagen_url: document.getElementById("doctorImagen").value,
-        estado: "ACTIVO"
-    };
-
-    const url = id ? `/doctores/${id}` : "/doctores";
-    const method = id ? "PATCH" : "POST";
-
-    const response = await fetch(url, {
-        method,
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(doctor)
-    });
-
-    const data = await response.json();
-    mostrarResultado("resultadoDoctor", data);
-
-    if (response.ok) {
-        limpiarDoctor();
-        await refrescarTodo();
-    }
-}
-
-function editarDoctor(id, nombre, especialidad, consultorio, imagenUrl) {
-    document.getElementById("doctorId").value = id;
-    document.getElementById("doctorNombre").value = nombre;
-    document.getElementById("doctorEspecialidad").value = especialidad;
-    document.getElementById("doctorConsultorio").value = consultorio;
-    document.getElementById("doctorImagen").value = imagenUrl;
-    document.getElementById("btnDoctor").innerText = "Actualizar doctor";
-
-    window.scrollTo({
-        top: document.getElementById("doctorNombre").offsetTop - 140,
-        behavior: "smooth"
-    });
-}
-
-async function eliminarDoctor(id) {
-    if (!confirm("¿Deseas inactivar este doctor?")) return;
-
-    const response = await fetch(`/doctores/${id}`, { method: "DELETE" });
-    const data = await response.json();
-
-    mostrarResultado("resultadoDoctor", data);
-    await refrescarTodo();
-}
-
-function limpiarDoctor() {
-    document.getElementById("doctorId").value = "";
-    document.getElementById("doctorNombre").value = "";
-    document.getElementById("doctorEspecialidad").value = "";
-    document.getElementById("doctorConsultorio").value = "";
-    document.getElementById("doctorImagen").value = "";
-    document.getElementById("btnDoctor").innerText = "Guardar doctor";
-}
-
-async function cargarDoctores() {
-    const response = await fetch("/doctores");
-    doctoresGlobal = await response.json();
-    renderDoctores(doctoresGlobal);
-}
-
-function renderDoctores(doctores) {
-    const contenedor = document.getElementById("cardsDoctores");
-    contenedor.innerHTML = "";
-
-    doctores.forEach(d => {
-        contenedor.innerHTML += `
-            <div class="record-card" data-search="${d.nombre} ${d.especialidad} ${d.consultorio} ${d.estado}">
-                <img class="doctor-img" src="${d.imagen_url}" alt="${d.nombre}">
-
-                <div class="record-header">
-                    <h3>${d.nombre}</h3>
-                    <span class="badge ${d.estado === "INACTIVO" ? "badge-inactivo" : ""}">${d.estado}</span>
-                </div>
-
-                <div class="record-meta">
-                    <span><strong>ID:</strong> ${d.id}</span>
-                    <span><strong>Especialidad:</strong> ${d.especialidad}</span>
-                    <span><strong>Consultorio:</strong> ${d.consultorio}</span>
-                </div>
-
-                <div class="actions">
-                    <button class="btn-warning" onclick="editarDoctor(${d.id}, '${textoSeguro(d.nombre)}', '${textoSeguro(d.especialidad)}', '${textoSeguro(d.consultorio)}', '${textoSeguro(d.imagen_url)}')">Editar</button>
-                    <button class="btn-danger" onclick="eliminarDoctor(${d.id})">Eliminar</button>
-                </div>
-            </div>
-        `;
-    });
-}
-
-function filtrarCardsDoctores() {
-    const filtro = document.getElementById("filtroDoctoresLocal").value.toLowerCase();
-
-    const filtrados = doctoresGlobal.filter(d =>
-        `${d.nombre} ${d.especialidad} ${d.consultorio} ${d.estado}`.toLowerCase().includes(filtro)
-    );
-
-    renderDoctores(filtrados);
-}
-
-/* =========================
-   CITAS CRUD
-========================= */
-
-async function guardarCita(event) {
-    event.preventDefault();
-
-    const id = document.getElementById("citaId").value;
-    const fecha = document.getElementById("citaFecha").value;
-    const hoy = new Date().toISOString().split("T")[0];
-
-    if (fecha < hoy) {
-        document.getElementById("resultadoCita").innerHTML =
-            "<span class='error'>No se puede registrar una cita en una fecha pasada.</span>";
-        return;
+        renderPacientes(pacientes);
     }
 
-    const cita = {
-        paciente_id: Number(document.getElementById("citaPaciente").value),
-        doctor_id: Number(document.getElementById("citaDoctor").value),
-        tipo_consulta: document.getElementById("citaTipo").value,
-        fecha: fecha,
-        hora: document.getElementById("citaHora").value,
-        estado: "ACTIVO"
-    };
+    function renderPacientes(pacientes) {
+        const contenedor = document.getElementById("contenedorPacientes");
+        contenedor.innerHTML = "";
 
-    const url = id ? `/citas/${id}` : "/citas";
-    const method = id ? "PATCH" : "POST";
+        if (!pacientes || pacientes.length === 0) {
+            contenedor.innerHTML = "<p>No hay pacientes para mostrar.</p>";
+            return;
+        }
 
-    const response = await fetch(url, {
-        method,
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(cita)
-    });
+        pacientes.forEach(paciente => {
+            const tarjeta = document.createElement("div");
+            tarjeta.className = "tarjeta";
 
-    const data = await response.json();
-    mostrarResultado("resultadoCita", data);
+            const estadoClase = paciente.estado === "ACTIVO"
+                ? "estado-activo"
+                : "estado-inactivo";
 
-    if (response.ok) {
-        limpiarCita();
-        await refrescarTodo();
-    }
-}
+            tarjeta.innerHTML = `
+                <h3>${paciente.nombre}</h3>
+                <p><strong>ID:</strong> ${paciente.id}</p>
+                <p><strong>Documento:</strong> ${paciente.documento}</p>
+                <p><strong>Teléfono:</strong> ${paciente.telefono}</p>
+                <p><strong>Estado:</strong> <span class="${estadoClase}">${paciente.estado}</span></p>
+            `;
 
-function editarCita(id, pacienteId, doctorId, tipo, fecha, hora) {
-    document.getElementById("citaId").value = id;
-    document.getElementById("citaPaciente").value = pacienteId;
-    document.getElementById("citaDoctor").value = doctorId;
-    document.getElementById("citaTipo").value = tipo;
-    document.getElementById("citaFecha").value = fecha;
-    document.getElementById("citaHora").value = hora;
-    document.getElementById("btnCita").innerText = "Actualizar cita";
-
-    window.scrollTo({
-        top: document.getElementById("citaPaciente").offsetTop - 140,
-        behavior: "smooth"
-    });
-}
-
-async function eliminarCita(id) {
-    if (!confirm("¿Deseas cancelar esta cita?")) return;
-
-    const response = await fetch(`/citas/${id}`, { method: "DELETE" });
-    const data = await response.json();
-
-    mostrarResultado("resultadoCita", data);
-    await refrescarTodo();
-}
-
-function limpiarCita() {
-    document.getElementById("citaId").value = "";
-    document.getElementById("citaPaciente").value = "";
-    document.getElementById("citaDoctor").value = "";
-    document.getElementById("citaTipo").value = "GENERAL";
-    document.getElementById("citaFecha").value = "";
-    document.getElementById("citaHora").value = "";
-    document.getElementById("btnCita").innerText = "Guardar cita";
-}
-
-async function cargarCitas() {
-    const response = await fetch("/citas");
-    citasGlobal = await response.json();
-    renderCitas(citasGlobal);
-}
-
-function renderCitas(citas) {
-    const contenedor = document.getElementById("cardsCitas");
-    contenedor.innerHTML = "";
-
-    citas.slice().reverse().forEach(c => {
-        const paciente = pacientesGlobal.find(p => p.id === c.paciente_id);
-        const doctor = doctoresGlobal.find(d => d.id === c.doctor_id);
-
-        contenedor.innerHTML += `
-            <div class="record-card" data-search="${paciente ? paciente.nombre : c.paciente_id} ${doctor ? doctor.nombre : c.doctor_id} ${c.tipo_consulta} ${c.fecha} ${c.hora} ${c.estado}">
-                <div class="record-header">
-                    <h3>Cita #${c.id}</h3>
-                    <span class="badge ${c.estado === "INACTIVO" ? "badge-inactivo" : ""}">${c.estado}</span>
-                </div>
-
-                <div class="record-meta">
-                    <span><strong>Paciente:</strong> ${paciente ? paciente.nombre : c.paciente_id}</span>
-                    <span><strong>Doctor:</strong> ${doctor ? doctor.nombre : c.doctor_id}</span>
-                    <span><strong>Tipo:</strong> ${c.tipo_consulta}</span>
-                    <span><strong>Fecha:</strong> ${c.fecha}</span>
-                    <span><strong>Hora:</strong> ${c.hora}</span>
-                </div>
-
-                <div class="actions">
-                    <button class="btn-warning" onclick="editarCita(${c.id}, ${c.paciente_id}, ${c.doctor_id}, '${textoSeguro(c.tipo_consulta)}', '${textoSeguro(c.fecha)}', '${textoSeguro(c.hora)}')">Editar</button>
-                    <button class="btn-danger" onclick="eliminarCita(${c.id})">Cancelar</button>
-                </div>
-            </div>
-        `;
-    });
-}
-
-function filtrarCardsCitas() {
-    const filtro = document.getElementById("filtroCitasLocal").value.toLowerCase();
-
-    const filtradas = citasGlobal.filter(c => {
-        const paciente = pacientesGlobal.find(p => p.id === c.paciente_id);
-        const doctor = doctoresGlobal.find(d => d.id === c.doctor_id);
-
-        return `${paciente ? paciente.nombre : c.paciente_id} ${doctor ? doctor.nombre : c.doctor_id} ${c.tipo_consulta} ${c.fecha} ${c.hora} ${c.estado}`.toLowerCase().includes(filtro);
-    });
-
-    renderCitas(filtradas);
-}
-
-/* =========================
-   SELECTS
-========================= */
-
-async function cargarPacientesSelect() {
-    const select = document.getElementById("citaPaciente");
-    select.innerHTML = '<option value="">Seleccione un paciente</option>';
-
-    pacientesGlobal
-        .filter(p => p.estado === "ACTIVO")
-        .forEach(p => {
-            select.innerHTML += `<option value="${p.id}">${p.nombre} - Doc: ${p.documento}</option>`;
+            contenedor.appendChild(tarjeta);
         });
-}
 
-async function cargarDoctoresSelect() {
-    const select = document.getElementById("citaDoctor");
-    select.innerHTML = '<option value="">Seleccione un doctor</option>';
-
-    doctoresGlobal
-        .filter(d => d.estado === "ACTIVO")
-        .forEach(d => {
-            select.innerHTML += `<option value="${d.id}">${d.nombre} - ${d.especialidad}</option>`;
-        });
-}
-
-/* =========================
-   BÚSQUEDAS NAVBAR
-========================= */
-
-async function buscarPaciente() {
-    const nombre = document.getElementById("buscador").value;
-
-    if (nombre.length < 3) {
-        document.getElementById("resultadosBusqueda").innerText = "";
-        return;
+        document.getElementById("paginaPacientes").innerText = `Página ${paginaActualPacientes}`;
     }
 
-    const data = await (await fetch(`/pacientes/buscar/?nombre=${encodeURIComponent(nombre)}`)).json();
-    document.getElementById("resultadosBusqueda").innerText = JSON.stringify(data, null, 2);
-}
+    async function filtrarPacientes() {
+        const nombre = document.getElementById("buscarPaciente").value.trim();
+        const estado = document.getElementById("estadoPaciente").value;
 
-async function buscarDoctor() {
-    const especialidad = document.getElementById("buscadorDoctor").value;
+        offsetPacientes = 0;
+        paginaActualPacientes = 1;
 
-    if (especialidad.length < 3) {
-        document.getElementById("resultadosBusquedaDoctor").innerText = "";
-        return;
+        if (nombre) {
+            modoPacientes = "buscar";
+        } else if (estado) {
+            modoPacientes = "filtrar";
+        } else {
+            modoPacientes = "normal";
+        }
+
+        await cargarPacientes();
     }
 
-    const data = await (await fetch(`/doctores/buscar/?especialidad=${encodeURIComponent(especialidad)}`)).json();
-    document.getElementById("resultadosBusquedaDoctor").innerText = JSON.stringify(data, null, 2);
-}
+    async function limpiarFiltrosPacientes() {
+        document.getElementById("buscarPaciente").value = "";
+        document.getElementById("estadoPaciente").value = "";
 
-/* =========================
-   DASHBOARD
-========================= */
+        offsetPacientes = 0;
+        paginaActualPacientes = 1;
+        modoPacientes = "normal";
 
-async function cargarResumen() {
-    const data = await (await fetch("/hallazgos/resumen")).json();
+        await cargarPacientes();
+    }
 
-    document.getElementById("kpiPacientes").innerText = data.total_pacientes;
-    document.getElementById("kpiDoctores").innerText = data.total_doctores;
-    document.getElementById("kpiCitas").innerText = data.total_citas;
-    document.getElementById("resumen").innerText = JSON.stringify(data, null, 2);
-}
+    async function paginaSiguientePacientes() {
+        offsetPacientes += limitPacientes;
+        paginaActualPacientes += 1;
 
-async function cargarEspecialidades() {
-    const data = await (await fetch("/hallazgos/especialidades")).json();
-    const labels = data.map(i => i.especialidad);
-    const values = data.map(i => i.cantidad_citas);
+        await cargarPacientes();
+    }
 
-    if (graficaEspecialidades) graficaEspecialidades.destroy();
+    async function paginaAnteriorPacientes() {
+        if (offsetPacientes === 0) return;
 
-    graficaEspecialidades = new Chart(document.getElementById("graficaEspecialidades"), {
-        type: "bar",
-        data: {
-            labels,
-            datasets: [{
-                label: "Citas por especialidad",
-                data: values
-            }]
-        }
-    });
-}
+        offsetPacientes -= limitPacientes;
+        paginaActualPacientes -= 1;
 
-async function cargarDoctoresTop() {
-    const data = await (await fetch("/hallazgos/doctores-top")).json();
-    const top = data.slice(0, 5);
+        await cargarPacientes();
+    }
 
-    if (graficaDoctores) graficaDoctores.destroy();
-
-    graficaDoctores = new Chart(document.getElementById("graficaDoctores"), {
-        type: "bar",
-        data: {
-            labels: top.map(i => i.doctor),
-            datasets: [{
-                label: "Citas por doctor",
-                data: top.map(i => i.cantidad_citas)
-            }]
-        }
-    });
-}
-
-async function cargarPacientesFrecuentes() {
-    const data = await (await fetch("/hallazgos/pacientes-frecuentes")).json();
-    const top = data.slice(0, 5);
-
-    if (graficaPacientes) graficaPacientes.destroy();
-
-    graficaPacientes = new Chart(document.getElementById("graficaPacientes"), {
-        type: "bar",
-        data: {
-            labels: top.map(i => i.paciente),
-            datasets: [{
-                label: "Citas por paciente",
-                data: top.map(i => i.cantidad_citas)
-            }]
-        }
-    });
-}
-
-async function cargarTiposConsulta() {
-    const data = await (await fetch("/hallazgos/tipos-consulta")).json();
-
-    if (graficaTiposConsulta) graficaTiposConsulta.destroy();
-
-    graficaTiposConsulta = new Chart(document.getElementById("graficaTiposConsulta"), {
-        type: "pie",
-        data: {
-            labels: data.map(i => i.tipo_consulta),
-            datasets: [{
-                label: "Tipos de consulta",
-                data: data.map(i => i.cantidad_citas)
-            }]
-        }
-    });
-}
+    document.addEventListener("DOMContentLoaded", cargarPacientes);
 </script>
 
 </body>

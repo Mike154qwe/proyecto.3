@@ -77,22 +77,29 @@ async def create_paciente(paciente: PacienteBase, session: SessionDep):
 async def get_pacientes(
     session: SessionDep,
     offset: int = Query(default=0, ge=0),
-    limit: int = Query(default=20, ge=1, le=100)
+    limit: int = Query(default=12, ge=1, le=100)
 ):
     return all_pacientes_db(session, offset=offset, limit=limit)
 
 
 @app.get("/pacientes/buscar/", response_model=list[PacienteID])
-async def buscar_pacientes_por_nombre(nombre: str, session: SessionDep):
-    return search_pacientes_by_nombre(nombre, session)
+async def buscar_pacientes_por_nombre(
+    nombre: str,
+    session: SessionDep,
+    offset: int = Query(default=0, ge=0),
+    limit: int = Query(default=12, ge=1, le=100)
+):
+    return search_pacientes_by_nombre(nombre, session, offset=offset, limit=limit)
 
 
 @app.get("/pacientes/filtrar/", response_model=list[PacienteID])
 async def filtrar_pacientes(
     session: SessionDep,
-    estado: EstadoRegistro | None = Query(default=None)
+    estado: EstadoRegistro | None = Query(default=None),
+    offset: int = Query(default=0, ge=0),
+    limit: int = Query(default=12, ge=1, le=100)
 ):
-    return filter_pacientes(estado, session)
+    return filter_pacientes(estado, session, offset=offset, limit=limit)
 
 
 @app.get("/pacientes/{id}", response_model=PacienteID)
